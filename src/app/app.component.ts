@@ -1,12 +1,19 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { supabase } from '../supabase-client';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
 })
-export class AppComponent {
-  title = 'marketplace';
+export class AppComponent implements OnInit {
+  ngOnInit(): void {
+    console.log();
+  }
+  title = 'Lista de Itens em Cards';
 }
