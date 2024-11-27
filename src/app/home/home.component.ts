@@ -117,7 +117,7 @@ export class HomeComponent implements OnInit {
 
     // Converte a data e hora para o formato esperado, ajustando para o fuso horário de Brasília
     const dataCompraLocal = new Date(this.modalItem.campo2);
-    const dataCompraBrasilia = new Date(dataCompraLocal.getTime() - dataCompraLocal.getTimezoneOffset() * 60000);
+    const dataCompraBrasilia = new Date(dataCompraLocal.getTime() - (dataCompraLocal.getTimezoneOffset() * 60000) + (3 * 60 * 60 * 1000));
 
     const novoInvestimento = {
       id_item: this.modalItem.id, // Pega o ID do item selecionado
