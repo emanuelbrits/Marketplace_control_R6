@@ -1,4 +1,4 @@
-<div class="bg-gray-800 p-4 shadow-md">
+<div class="bg-gray-800 p-4 shadow-md font-sans">
     <div class="flex items-center justify-between max-w-7xl mx-auto">
         <!-- Logo ou Título -->
         <div class="text-white text-xl font-bold">
@@ -6,9 +6,14 @@
         </div>
 
         <!-- Botões de navegação -->
-        <div class="space-x-4">
+        <div class="flex items-center space-x-4">
             <a href="/" class="text-white hover:text-gray-300">Home</a>
             <a href="/investimentos" class="text-white hover:text-gray-300">Investimentos</a>
+
+            <!-- Botão de Logout -->
+            <button (click)="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                Logout
+            </button>
         </div>
     </div>
 </div>
@@ -83,23 +88,19 @@
     </div>
 
     <div class="flex justify-between items-center mt-4">
-        <button 
-          class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-          (click)="paginaAnterior()"
-          [disabled]="page === 1">
-          Página Anterior
+        <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400" (click)="paginaAnterior()"
+            [disabled]="page === 1">
+            Página Anterior
         </button>
-      
+
         <span class="text-white">Página {{ page }} de {{ Math.ceil(totalItens / itensPorPagina) }}</span>
-      
-        <button 
-          class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-          (click)="proximaPagina()"
-          [disabled]="page * itensPorPagina >= totalItens">
-          Próxima Página
+
+        <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400" (click)="proximaPagina()"
+            [disabled]="page * itensPorPagina >= totalItens">
+            Próxima Página
         </button>
-      </div>
-      
+    </div>
+
 </div>
 
 <!-- Modal -->

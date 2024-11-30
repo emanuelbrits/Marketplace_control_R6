@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { supabase } from '../../supabase-client'; // Ajuste conforme o seu projeto
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 interface Investimento {
@@ -47,11 +47,37 @@ export class InvestimentosComponent implements OnInit {
     this.carregarInvestimentos();
   }
 
+  constructor(private router: Router) { }
+
+  async logout() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erro ao fazer logout:', error.message);
+      } else {
+        // Redireciona para a página de login ou outra página
+        this.router.navigate(['/login']);
+      }
+    } catch (err) {
+      console.error('Erro inesperado ao fazer logout:', err);
+    }
+  }
+
   async carregarInvestimentos() {
     try {
       this.loading = true;
 
-      // Busca os investimentos com as informações do item relacionado
+      // Obtém o usuário autenticado
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error('Usuário não autenticado.');
+      }
+
+      // Busca os investimentos do usuário logado com as informações do item relacionado
       const { data, error } = await supabase
         .from('investimento')
         .select(`
@@ -62,7 +88,8 @@ export class InvestimentosComponent implements OnInit {
           data_compra,
           itens (nome, url_foto)
         `)
-        .order('data_compra', { ascending: true }); // Ordena por data_compra (mais antigo primeiro)
+        .eq('id_usuario', user.id) // Filtra pelo ID do usuário
+        .order('data_compra', { ascending: true }); // Ordena por data_compra
 
       if (error) {
         throw error;
@@ -70,7 +97,7 @@ export class InvestimentosComponent implements OnInit {
 
       let totalInvestido = 0;
       let totalRetorno = 0;
-      let totalretornoEstimado = 0
+      let totalretornoEstimado = 0;
 
       // Mapear os dados e adicionar as novas propriedades
       this.investimentos = (data || []).map((item: any) => {
@@ -83,7 +110,7 @@ export class InvestimentosComponent implements OnInit {
         // Acumular os valores
         if (item.valor_vendido === 0) {
           totalInvestido += item.valor_compra;
-          totalretornoEstimado += 60
+          totalretornoEstimado += 60; // Exemplo de cálculo para retorno estimado
         }
 
         if (item.valor_vendido > 0) {

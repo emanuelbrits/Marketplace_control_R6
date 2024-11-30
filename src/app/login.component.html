@@ -1,0 +1,37 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-6 rounded shadow-md w-96">
+        <h1 class="text-2xl font-bold mb-4">Login</h1>
+
+        <form (submit)="login()">
+            <!-- E-mail -->
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium">E-mail</label>
+                <input type="email" id="email" [(ngModel)]="email" name="email" class="w-full mt-1 p-2 border rounded"
+                    required />
+            </div>
+
+            <!-- Senha -->
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium">Senha</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password"
+                    class="w-full mt-1 p-2 border rounded" required />
+            </div>
+
+            <!-- Botão de Login -->
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                [disabled]="isLoading">
+                {{ isLoading ? 'Entrando...' : 'Entrar' }}
+            </button>
+        </form>
+
+        <!-- Erro -->
+        <div *ngIf="errorMessage" class="mt-4 text-red-500">{{ errorMessage }}</div>
+
+        <!-- Login com Google -->
+        <div class="mt-4">
+            <button class="w-full bg-gray-800 text-white p-2 rounded hover:bg-gray-900" (click)="loginWithGoogle()">
+                Entrar com Google
+            </button>
+        </div>
+    </div>
+</div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { supabase } from '../../supabase-client';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'home-root',
@@ -21,17 +21,17 @@ export class HomeComponent implements OnInit {
   totalItens = 0;
   Math = Math;
   searchQuery = '';
-  
+
   // Filtros
   filtroTipo: string = '';
   filtroArma: string = '';
   filtroOperador: string = '';
-  
+
   // Opções para os selects
   opcoesTipo: string[] = ['ARMA', 'AMULETO', 'ESTAMPA PARA ADICIONAL', 'HEADGEAR', 'UNIFORM'];
   opcoesArmas: string[] = [];
   opcoesOperadores: string[] = [];
-  
+
   // Modal
   modalAberto = false;
   modalItem: any = { campo1: '', campo2: '', campo3: '', campo4: '' };
@@ -39,6 +39,22 @@ export class HomeComponent implements OnInit {
   async ngOnInit() {
     await this.carregarItens();
     await this.carregarOpcoes(); // Carregar as opções para os filtros
+  }
+
+  constructor(private router: Router) { }
+
+  async logout() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erro ao fazer logout:', error.message);
+      } else {
+        // Redireciona para a página de login ou outra página
+        this.router.navigate(['/login']);
+      }
+    } catch (err) {
+      console.error('Erro inesperado ao fazer logout:', err);
+    }
   }
 
   async carregarItens() {
@@ -183,14 +199,28 @@ export class HomeComponent implements OnInit {
       return;
     }
 
+    // Obtém o ID do usuário autenticado
+    const { data: user, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user?.user) {
+      console.error('Erro ao obter usuário autenticado:', userError?.message);
+      alert('Erro ao identificar o usuário. Faça login novamente.');
+      return;
+    }
+
     // Converte a data e hora para o formato esperado, ajustando para o fuso horário de Brasília
     const dataCompraLocal = new Date(this.modalItem.campo2);
-    const dataCompraBrasilia = new Date(dataCompraLocal.getTime() - (dataCompraLocal.getTimezoneOffset() * 60000) + (3 * 60 * 60 * 1000));
+    const dataCompraBrasilia = new Date(
+      dataCompraLocal.getTime() -
+      dataCompraLocal.getTimezoneOffset() * 60000 +
+      3 * 60 * 60 * 1000
+    );
 
     const novoInvestimento = {
-      id_item: this.modalItem.id, // Pega o ID do item selecionado
+      id_item: this.modalItem.id, // ID do item selecionado
       valor_compra: this.modalItem.campo1,
       data_compra: dataCompraBrasilia.toISOString(), // ISO ajustado para horário local
+      id_usuario: user.user.id, // Adiciona o ID do usuário autenticado
     };
 
     // Chama o Supabase para inserir o novo investimento
