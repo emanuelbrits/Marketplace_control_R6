@@ -16,27 +16,28 @@
 <div class="p-4 bg-slate-600">
     <h1 class="text-2xl font-bold mb-4 text-white">Lista de Investimentos</h1>
 
-    <!-- Indicador de carregamento -->
-    <div *ngIf="loading" class="text-gray-500">Carregando investimentos...</div>
-
-    <!-- Mensagem de erro -->
-    <div *ngIf="error" class="text-red-500">
-        {{ error }}
-    </div>
     <div class="mb-4 p-4 bg-black rounded-lg shadow">
         <h1 class="text-3xl font-bold text-white text-center">Resumo</h1>
         <div class="flex justify-around">
             <div class="flex flex-col mr-4">
-                <span class="font-semibold text-white">Quantidade Investida:</span>
-                <div class="bg-white inline-flex items-center w-20">
+                <span class="font-semibold text-white">Valor no inventario:</span>
+                <div class="bg-white inline-flex items-center w-20 rounded">
                     <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                         alt="" class="w-5 h-5 mr-2 align-middle ml-2">
                     <span class="text-black font-bold">{{quantidadeInvestida}}</span>
                 </div>
             </div>
             <div class="flex flex-col mr-4 ml-4">
-                <span class="font-semibold text-white">Retorno Obtido:</span>
-                <div class="bg-green-500 inline-flex items-center w-20">
+                <span class="font-semibold text-white">Retorno estimado de itens no inventario:</span>
+                <div class="bg-green-500 inline-flex items-center w-20 rounded">
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        alt="" class="w-5 h-5 mr-2 align-middle ml-2">
+                    <span class="text-black font-bold">{{retornoEstimado}}</span>
+                </div>
+            </div>
+            <div class="flex flex-col mr-4 ml-4">
+                <span class="font-semibold text-white">Retorno Obtido de itens vendidos:</span>
+                <div class="bg-green-500 inline-flex items-center w-20 rounded">
                     <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                         alt="" class="w-5 h-5 mr-2 align-middle ml-2">
                     <span class="text-black font-bold">{{retornoObtido}}</span>
@@ -44,9 +45,33 @@
             </div>
         </div>
     </div>
+
+    <!-- Botões de filtro -->
+    <div class="flex space-x-4 mb-4">
+        <button (click)="statusFiltro = 'aguardando'"
+            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'aguardando', 'bg-gray-500 text-gray-200': statusFiltro !== 'aguardando' }"
+            class="px-4 py-2 rounded-lg">
+            Aguardando venda
+        </button>
+        <button (click)="statusFiltro = 'vendidos'"
+            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'vendidos', 'bg-gray-500 text-gray-200': statusFiltro !== 'vendidos' }"
+            class="px-4 py-2 rounded-lg">
+            Vendidos
+        </button>
+    </div>
+
+    <!-- Indicador de carregamento -->
+    <div *ngIf="loading" class="text-gray-500">Carregando investimentos...</div>
+
+    <!-- Mensagem de erro -->
+    <div *ngIf="error" class="text-red-500">
+        {{ error }}
+    </div>
+
     <!-- Lista de investimentos -->
     <div *ngIf="!loading && investimentos.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div *ngFor="let investimento of investimentos" class="bg-slate-800 shadow rounded text-center group relative"
+        <div *ngFor="let investimento of investimentosFiltrados"
+            class="bg-slate-800 shadow rounded text-center group relative"
             [ngClass]="{ 'border-4 border-green-500': investimento.valor_vendido > 0 }">
             <!-- Imagem do item -->
             <div class="relative w-full h-64 overflow-hidden rounded">
@@ -95,9 +120,8 @@
         </div>
     </div>
 
-
     <!-- Mensagem se não houver investimentos -->
-    <div *ngIf="!loading && investimentos.length === 0" class="text-gray-500">
+    <div *ngIf="!loading && investimentosFiltrados.length === 0" class="text-gray-500">
         Nenhum investimento encontrado.
     </div>
 </div>

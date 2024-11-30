@@ -21,13 +21,24 @@ export class HomeComponent implements OnInit {
   totalItens = 0;
   Math = Math;
   searchQuery = '';
-
+  
+  // Filtros
+  filtroTipo: string = '';
+  filtroArma: string = '';
+  filtroOperador: string = '';
+  
+  // Opções para os selects
+  opcoesTipo: string[] = ['ARMA', 'AMULETO', 'ESTAMPA PARA ADICIONAL', 'HEADGEAR', 'UNIFORM'];
+  opcoesArmas: string[] = [];
+  opcoesOperadores: string[] = [];
+  
   // Modal
   modalAberto = false;
   modalItem: any = { campo1: '', campo2: '', campo3: '', campo4: '' };
 
   async ngOnInit() {
     await this.carregarItens();
+    await this.carregarOpcoes(); // Carregar as opções para os filtros
   }
 
   async carregarItens() {
@@ -42,14 +53,42 @@ export class HomeComponent implements OnInit {
     } else {
       this.itens = data || [];
       this.totalItens = count || 0;
-      this.applySearch();
+      this.applySearch(); // Aplica filtro de busca
     }
 
     this.loading = false;
   }
 
+  async carregarOpcoes() {
+    // Carrega as opções de armas e operadores para os filtros
+    const { data: armas, error: armasError } = await supabase
+      .from('itens')
+      .select('arma_operador')
+      .eq('tipo', 'WEAPON SKIN'); // Considera apenas as armas
+
+    const { data: operadores, error: operadoresError } = await supabase
+      .from('itens')
+      .select('arma_operador')
+      .in('tipo', ['HEADGEAR', 'UNIFORM']); // Considera apenas os operadores
+
+    if (armasError || operadoresError) {
+      console.error('Erro ao buscar opções:', armasError?.message, operadoresError?.message);
+    } else {
+      // Garantir que as opções sejam únicas utilizando Set
+      this.opcoesArmas = [...new Set(armas?.map((item: { arma_operador: string }) => item.arma_operador) || [])];
+      this.opcoesOperadores = [...new Set(operadores?.map((item: { arma_operador: string }) => item.arma_operador) || [])];
+    }
+  }
+
+  onTipoChange() {
+    // Quando o tipo de item for alterado, limpa os filtros de arma e operador
+    this.filtroArma = '';
+    this.filtroOperador = '';
+    this.applyPagination(); // Reaplica a paginação e filtros
+  }
+
   applySearch() {
-    // Aplique a busca no array de itens
+    // Aplica a busca no array de itens
     if (this.searchQuery) {
       this.filteredItens = this.itens.filter(item =>
         item.nome.toLowerCase().includes(this.searchQuery.toLowerCase()) // Filtro baseado no nome
@@ -64,17 +103,46 @@ export class HomeComponent implements OnInit {
   }
 
   applyPagination() {
-    // Calcular os itens que devem ser exibidos para a página atual
     const inicio = (this.page - 1) * this.itensPorPagina;
     const fim = inicio + this.itensPorPagina;
 
-    // Aplica a paginação aos itens filtrados
-    const itensFiltrados = this.searchQuery
-      ? this.itens.filter(item => item.nome.toLowerCase().includes(this.searchQuery.toLowerCase()))
-      : this.itens;
+    // Aplica o filtro de tipo e outros
+    this.filteredItens = this.itens.filter(item => {
+      const matchesTipo = this.checkTipoFilter(item);
+      const matchesArma = this.filtroArma ? item.arma_operador === this.filtroArma : true;
+      const matchesOperador = this.filtroOperador ? item.arma_operador === this.filtroOperador : true;
+      const matchesSearch = this.searchQuery
+        ? item.nome.toLowerCase().includes(this.searchQuery.toLowerCase())
+        : true;
 
-    // Aplica a paginação aos itens filtrados
-    this.filteredItens = itensFiltrados.slice(inicio, fim);
+      return matchesTipo && matchesArma && matchesOperador && matchesSearch;
+    }).slice(inicio, fim); // Aplica a paginação aos itens filtrados
+  }
+
+  checkTipoFilter(item: any): boolean {
+    if (!this.filtroTipo) return true;
+
+    if (this.filtroTipo === 'ARMA') {
+      return item.tipo === 'PRIMARY_WEAPON' || item.tipo === 'SECONDARY_WEAPON' || item.tipo === 'WEAPON SKIN';
+    }
+
+    if (this.filtroTipo === 'AMULETO') {
+      return item.tipo === 'UNIVERSAL WEAPON CHARM';
+    }
+
+    if (this.filtroTipo === 'ESTAMPA PARA ADICIONAL') {
+      return item.tipo === 'ATTACHMENT SKIN SET' || item.tipo === 'UNIVERSAL ATTACHMENT SKIN SET';
+    }
+
+    if (this.filtroTipo === 'HEADGEAR') {
+      return item.tipo === 'HEADGEAR';
+    }
+
+    if (this.filtroTipo === 'UNIFORM') {
+      return item.tipo === 'UNIFORM';
+    }
+
+    return item.tipo === this.filtroTipo;
   }
 
   // Funções de navegação

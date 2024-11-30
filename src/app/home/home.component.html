@@ -14,14 +14,33 @@
 </div>
 
 <div class="p-4 bg-slate-600">
-    <h1 class="text-2xl font-bold mb-4 text-white">Selecione um item para registrar uma compra</h1>
+    <h1 class="text-2xl font-bold mb-4 text-white">Filtrar Itens</h1>
 
-    <!-- Mostrar indicador de carregamento -->
-    <div *ngIf="loading" class="text-gray-500">Carregando...</div>
+    <div class="mb-4 flex flex-col">
+        <select [(ngModel)]="filtroTipo" (ngModelChange)="onTipoChange()" class="p-2 rounded text-white w-80 mb-4">
+            <option value="">Todos os Tipos</option>
+            <option *ngFor="let tipo of opcoesTipo" [value]="tipo">{{ tipo }}</option>
+        </select>
 
-    <!-- Campo de busca -->
+        <!-- Filtro de Arma -->
+        <div *ngIf="filtroTipo === 'ARMA'">
+            <select [(ngModel)]="filtroArma" (ngModelChange)="applySearch()" class="p-2 rounded text-white w-80">
+                <option value="">Todas as Armas</option>
+                <option *ngFor="let arma of opcoesArmas" [value]="arma">{{ arma }}</option>
+            </select>
+        </div>
+
+        <!-- Filtro de Operador -->
+        <div *ngIf="filtroTipo === 'HEADGEAR' || filtroTipo === 'UNIFORM'">
+            <select [(ngModel)]="filtroOperador" (ngModelChange)="applySearch()" class="p-2 rounded text-white w-80">
+                <option value="">Todos os Operadores</option>
+                <option *ngFor="let operador of opcoesOperadores" [value]="operador">{{ operador }}</option>
+            </select>
+        </div>
+    </div>
+
     <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applySearch()" placeholder="Buscar por nome"
-        class="p-2 rounded text-white mb-4" />
+        class="p-2 rounded text-white mb-4 w-80" />
 
     <!-- Mostrar os cards -->
     <div *ngIf="!loading && filteredItens.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -37,10 +56,25 @@
                 </div>
             </div>
 
-            <!-- Título -->
-            <h3 class="mt-2 text-white font-semibold text-lg font-sans">{{ item.nome }}</h3>
-        </div>
+            <!-- Informações do Item -->
+            <div class="p-4">
+                <!-- Nome do Item -->
+                <h3 class="mt-2 text-white font-semibold text-lg font-sans">{{ item.nome }}</h3>
 
+                <!-- Tipo do Item -->
+                <p class="mt-1 text-gray-300 text-sm">
+                    <strong>Tipo:</strong> {{ item.tipo }}
+                </p>
+
+                <!-- Arma ou Operador -->
+                <p class="mt-1 text-gray-300 text-sm">
+                    <strong>{{ item.tipo === 'HEADGEAR' || item.tipo === 'UNIFORM' ? 'Operador' : 'Arma'
+                        }}:</strong>
+                    {{ item.tipo === 'HEADGEAR' || item.tipo === 'UNIFORM' ? item.arma_operador : item.arma_operador
+                    }}
+                </p>
+            </div>
+        </div>
     </div>
 
     <!-- Mensagem se não houver itens -->
@@ -48,21 +82,26 @@
         Nenhum item encontrado.
     </div>
 
-    <!-- Controles de Paginação -->
-    <div *ngIf="!loading && totalItens > itensPorPagina" class="flex justify-between mt-4">
-        <button (click)="paginaAnterior()" [disabled]="page === 1"
-            class="px-4 py-2 bg-slate-950 text-white rounded disabled:bg-gray-200 disabled:text-gray-200">
-            Página Anterior
+    <div class="flex justify-between items-center mt-4">
+        <button 
+          class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+          (click)="paginaAnterior()"
+          [disabled]="page === 1">
+          Página Anterior
         </button>
-        <span class="text-black font-sans">
-            Página {{ page }} de {{ Math.ceil(totalItens / itensPorPagina) }}
-        </span>
-        <button (click)="proximaPagina()" [disabled]="page * itensPorPagina >= totalItens"
-            class="px-4 py-2 bg-slate-950 text-white rounded disabled:bg-gray-200 disabled:text-gray-200">
-            Próxima Página
+      
+        <span class="text-white">Página {{ page }} de {{ Math.ceil(totalItens / itensPorPagina) }}</span>
+      
+        <button 
+          class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+          (click)="proximaPagina()"
+          [disabled]="page * itensPorPagina >= totalItens">
+          Próxima Página
         </button>
-    </div>
+      </div>
+      
 </div>
+
 <!-- Modal -->
 <div *ngIf="modalAberto" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-slate-600 p-8 rounded-lg shadow-lg w-96">

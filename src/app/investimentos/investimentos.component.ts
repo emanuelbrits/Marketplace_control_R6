@@ -2,17 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { supabase } from '../../supabase-client'; // Ajuste conforme o seu projeto
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
-
-function toBrasiliaTime(date: Date): Date {
-  const brasiliaOffset = -3 * 60; // Horário de Brasília é UTC-3
-  const localOffset = date.getTimezoneOffset(); // Deslocamento local do navegador
-  const offsetDifference = brasiliaOffset - localOffset;
-
-  // Ajustando a data para o horário de Brasília
-  date.setMinutes(date.getMinutes() + offsetDifference);
-  return date;
-}
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 interface Investimento {
   id: number;
@@ -41,6 +31,17 @@ export class InvestimentosComponent implements OnInit {
 
   quantidadeInvestida = 0; // Valor total gasto
   retornoObtido = 0; // Valor total de retorno
+  retornoEstimado = 0
+
+  statusFiltro: 'aguardando' | 'vendidos' = 'aguardando';
+
+  get investimentosFiltrados() {
+    return this.investimentos.filter((investimento) =>
+      this.statusFiltro === 'aguardando'
+        ? investimento.valor_vendido === 0
+        : investimento.valor_vendido > 0
+    );
+  }
 
   ngOnInit() {
     this.carregarInvestimentos();
@@ -61,7 +62,6 @@ export class InvestimentosComponent implements OnInit {
           data_compra,
           itens (nome, url_foto)
         `)
-        .order('valor_vendido', { ascending: true }) // Ordena por valor_vendido (nulo primeiro)
         .order('data_compra', { ascending: true }); // Ordena por data_compra (mais antigo primeiro)
 
       if (error) {
@@ -70,6 +70,7 @@ export class InvestimentosComponent implements OnInit {
 
       let totalInvestido = 0;
       let totalRetorno = 0;
+      let totalretornoEstimado = 0
 
       // Mapear os dados e adicionar as novas propriedades
       this.investimentos = (data || []).map((item: any) => {
@@ -79,13 +80,15 @@ export class InvestimentosComponent implements OnInit {
 
         const valorMinimoVenda = Math.round(item.valor_compra / 0.9); // Remove as casas decimais do valor mínimo de venda
 
-        if (item.valor_vendido == null) {
-          item.valor_vendido = 0;
+        // Acumular os valores
+        if (item.valor_vendido === 0) {
+          totalInvestido += item.valor_compra;
+          totalretornoEstimado += 60
         }
 
-        // Acumular os valores
-        totalInvestido += item.valor_compra;
-        totalRetorno += item.valor_vendido * 0.9; // Subtraindo 10% do valor vendido
+        if (item.valor_vendido > 0) {
+          totalRetorno += (item.valor_vendido * 0.9) - item.valor_compra; // Subtraindo 10% do valor vendido
+        }
 
         return {
           id: item.id,
@@ -103,6 +106,7 @@ export class InvestimentosComponent implements OnInit {
       // Atualizar os totais
       this.quantidadeInvestida = totalInvestido;
       this.retornoObtido = Math.trunc(totalRetorno);
+      this.retornoEstimado = totalretornoEstimado;
     } catch (err: any) {
       this.error = `Erro ao carregar os investimentos: ${err.message}`;
     } finally {
