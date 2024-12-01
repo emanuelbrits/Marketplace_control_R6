@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
   filtroOperador: string = '';
 
   // Opções para os selects
-  opcoesTipo: string[] = ['ARMA', 'AMULETO', 'ESTAMPA PARA ADICIONAL', 'HEADGEAR', 'UNIFORM'];
+  opcoesTipo: string[] = ['ARMA', 'AMULETO', 'ESTAMPA PARA ADICIONAL', 'HEADGEAR', 'UNIFORM', 'RETRATO DE AGENTE'];
   opcoesArmas: string[] = [];
   opcoesOperadores: string[] = [];
 
@@ -59,19 +59,31 @@ export class HomeComponent implements OnInit {
 
   async carregarItens() {
     this.loading = true;
+    this.itens = []; // Limpa a lista de itens
+    const batchSize = 1000; // Tamanho do lote a ser carregado
+    let from = 0;
 
-    const { data, error, count } = await supabase
-      .from('itens')
-      .select('*', { count: 'exact' });
+    while (true) {
+      const { data, error } = await supabase
+        .from('itens')
+        .select('*')
+        .range(from, from + batchSize - 1); // Define o intervalo do lote
 
-    if (error) {
-      console.error('Erro ao buscar itens:', error.message);
-    } else {
-      this.itens = data || [];
-      this.totalItens = count || 0;
-      this.applySearch(); // Aplica filtro de busca
+      if (error) {
+        console.error('Erro ao buscar itens:', error.message);
+        break; // Encerra em caso de erro
+      }
+
+      if (!data || data.length === 0) {
+        break; // Sai do loop se não houver mais registros
+      }
+
+      this.itens.push(...data); // Adiciona os registros carregados
+      from += batchSize; // Avança para o próximo lote
     }
 
+    this.totalItens = this.itens.length; // Atualiza o total de itens carregados
+    this.applySearch(); // Aplica o filtro de busca
     this.loading = false;
   }
 
@@ -112,7 +124,6 @@ export class HomeComponent implements OnInit {
     } else {
       this.filteredItens = [...this.itens]; // Se não houver busca, mostra todos os itens
     }
-
     // Resetar para a primeira página após aplicar o filtro
     this.page = 1;
     this.applyPagination(); // Aplica a paginação após o filtro
@@ -156,6 +167,10 @@ export class HomeComponent implements OnInit {
 
     if (this.filtroTipo === 'UNIFORM') {
       return item.tipo === 'UNIFORM';
+    }
+
+    if (this.filtroTipo === 'RETRATO DE AGENTE') {
+      return item.tipo === 'OPERATOR PORTRAIT';
     }
 
     return item.tipo === this.filtroTipo;
