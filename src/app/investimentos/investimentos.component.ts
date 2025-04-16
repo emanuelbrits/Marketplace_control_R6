@@ -3,6 +3,7 @@ import { supabase } from '../../supabase-client'; // Ajuste conforme o seu proje
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface Investimento {
   id: number;
@@ -24,6 +25,7 @@ interface Investimento {
 })
 export class InvestimentosComponent implements OnInit {
   investimentos: Investimento[] = [];
+  valoresMedios: { [id: string]: string } = {};
   loading = false;
   error: string | null = null;
   isModalOpen = false;  // Controla a exibição do modal
@@ -36,6 +38,22 @@ export class InvestimentosComponent implements OnInit {
   statusFiltro: 'aguardando' | 'vendidos' = 'aguardando';
 
   statusOrdenacao: 'recente' | 'antigo' = 'recente';
+
+  constructor(private router: Router, private http: HttpClient) { }
+
+  carregarValoresMedios() {
+    this.investimentosFiltrados.forEach((item) => {
+      this.http.get<{ valorMedio: string }>(`http://localhost:3000/api/valor-medio/${item.id_item}`)
+        .subscribe({
+          next: (res) => {
+            this.valoresMedios[item.id_item] = res.valorMedio;
+          },
+          error: (err) => {
+            console.error(`Erro ao buscar valor médio do item ${item.id_item}`, err);
+          }
+        });
+    });
+  }
 
   get investimentosFiltrados() {
     const filtrados = this.investimentos.filter((investimento) =>
@@ -51,11 +69,10 @@ export class InvestimentosComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.carregarInvestimentos();
-  }
-
-  constructor(private router: Router) { }
+  async ngOnInit() {
+    await this.carregarInvestimentos();
+    this.carregarValoresMedios();
+  }  
 
   async logout() {
     try {

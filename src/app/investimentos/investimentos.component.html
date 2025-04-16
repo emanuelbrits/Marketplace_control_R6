@@ -85,9 +85,15 @@
                     class="absolute inset-0 bg-gradient-to-t from-info to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
                 </div>
             </div>
-            <div class="absolute top-0 right-0 bg-green-600 text-white px-2 py-1 rounded-bl text-xs text-white">
-                <!-- Valor Médio: {{ valorMedio || 'Carregando...' }} -->
-                a
+            <div class="absolute top-2 right-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
+                <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
+                    Média 24h:
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        alt="" class="w-5 h-5 mx-2" />
+                    {{ valoresMedios[investimento.id_item] }}
+                </span>
+
+                <span *ngIf="!valoresMedios[investimento.id_item]">Carregando...</span>
             </div>
             <!-- Nome e detalhes -->
             <h2 class="mt-2 text-white font-semibold text-lg font-sans">{{ investimento.nome }}</h2>

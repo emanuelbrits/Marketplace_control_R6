@@ -8,6 +8,8 @@ const PORT = 3000;
 
 app.use(cors());
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
+
 app.get('/api/valor-medio/:itemId', async (req, res) => {
   const { itemId } = req.params;
 
