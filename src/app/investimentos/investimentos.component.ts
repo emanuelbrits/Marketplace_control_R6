@@ -43,7 +43,7 @@ export class InvestimentosComponent implements OnInit {
 
   carregarValoresMedios() {
     this.investimentosFiltrados.forEach((item) => {
-      this.http.get<{ valorMedio: string }>(`http://localhost:3000/api/valor-medio/${item.id_item}`)
+      this.http.get<{ valorMedio: string }>(`https://valormedio-m7s4cidcaa-uc.a.run.app/valorMedio?itemId=${item.id_item}`)
         .subscribe({
           next: (res) => {
             this.valoresMedios[item.id_item] = res.valorMedio;
