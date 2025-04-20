@@ -42,7 +42,6 @@
     </div>
 
     <div class="mb-4 p-4 bg-black rounded-lg shadow">
-        <h1 class="text-3xl font-bold text-white text-center">Resumo</h1>
         <div class="flex justify-around">
             <div class="flex flex-col mr-4">
                 <span class="font-semibold text-white">Valor no inventario:</span>
@@ -52,8 +51,16 @@
                     <span class="text-black font-bold">{{quantidadeInvestida}}</span>
                 </div>
             </div>
+            <div class="flex flex-col mr-4">
+                <span class="font-semibold text-white">Retorno estimado:</span>
+                <div class="bg-white inline-flex items-center w-20 rounded">
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        alt="" class="w-5 h-5 mr-2 align-middle ml-2">
+                    <span class="text-black font-bold">{{retornoEstimado}}</span>
+                </div>
+            </div>
             <div class="flex flex-col mr-4 ml-4">
-                <span class="font-semibold text-white">Retorno Obtido de itens vendidos:</span>
+                <span class="font-semibold text-white">Retorno Obtido:</span>
                 <div class="bg-green-500 inline-flex items-center w-20 rounded">
                     <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                         alt="" class="w-5 h-5 mr-2 align-middle ml-2">

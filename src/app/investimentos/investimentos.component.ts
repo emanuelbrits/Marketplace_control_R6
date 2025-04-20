@@ -47,6 +47,7 @@ export class InvestimentosComponent implements OnInit {
         .subscribe({
           next: (res) => {
             this.valoresMedios[item.id_item] = res.valorMedio;
+            this.retornoEstimado += Math.trunc(Number((Number(res.valorMedio) - (Number(res.valorMedio) * 0.1)) - item.valor_compra))
           },
           error: (err) => {
             console.error(`Erro ao buscar valor médio do item ${item.id_item}`, err);
@@ -122,7 +123,6 @@ export class InvestimentosComponent implements OnInit {
 
       let totalInvestido = 0;
       let totalRetorno = 0;
-      let totalretornoEstimado = 0;
 
       // Mapear os dados e adicionar as novas propriedades
       this.investimentos = (data || []).map((item: any) => {
@@ -135,7 +135,6 @@ export class InvestimentosComponent implements OnInit {
         // Acumular os valores
         if (item.valor_vendido === 0) {
           totalInvestido += item.valor_compra;
-          totalretornoEstimado += 60; // Exemplo de cálculo para retorno estimado
         }
 
         if (item.valor_vendido > 0) {
@@ -158,7 +157,6 @@ export class InvestimentosComponent implements OnInit {
       // Atualizar os totais
       this.quantidadeInvestida = totalInvestido;
       this.retornoObtido = Math.trunc(totalRetorno);
-      this.retornoEstimado = totalretornoEstimado;
     } catch (err: any) {
       this.error = `Erro ao carregar os investimentos: ${err.message}`;
     } finally {
