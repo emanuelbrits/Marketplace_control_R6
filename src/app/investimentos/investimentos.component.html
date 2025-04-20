@@ -92,6 +92,13 @@
                     class="absolute inset-0 bg-gradient-to-t from-info to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
                 </div>
             </div>
+            <div class="absolute top-2 left-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
+                <span class="inline-flex items-center">
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        alt="" class="w-5 h-5 mr-2 align-middle">
+                    {{ investimento.valor_compra | number }}
+                </span>
+            </div>
             <div class="absolute top-2 right-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
                 <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
                     Média 24h:
@@ -104,16 +111,6 @@
             </div>
             <!-- Nome e detalhes -->
             <h2 class="mt-2 text-white font-semibold text-lg font-sans">{{ investimento.nome }}</h2>
-            <p class="mt-2 text-white text-medium font-sans">
-                <strong class="mr-2">Valor Compra:</strong>
-                <span class="inline-flex items-center">
-                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                        alt="" class="w-5 h-5 mr-2 align-middle">
-                    {{ investimento.valor_compra | number }}
-                </span>
-            </p>
-            <p class="mt-2 text-white text-medium font-sans"><strong>Data Compra:</strong> {{
-                investimento.data_compra | date:'dd/MM/yyyy HH:mm' }}</p>
             <p class="mt-2 text-white text-medium font-sans"><strong>Data de Venda:</strong> {{
                 investimento.data_venda | date:'dd/MM/yyyy HH:mm' }}</p>
             <p class="mt-2 text-white text-medium font-sans"><strong>Valor Mínimo de Venda:</strong> {{
@@ -128,13 +125,22 @@
             </p>
 
             <!-- Cálculos de Lucro -->
-            <p class="mt-2 text-white text-medium font-sans"><strong>Lucro:</strong> {{
-                (investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra) | number
-                }}</p>
-            <p class="mt-2 text-white text-medium font-sans"><strong>Lucro Percentual:</strong> {{
-                ((investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra) /
-                investimento.valor_compra) * 100 | number:'1.2-2' }}%
-            </p>
+            <div class="flex flex-row text-center justify-evenly">
+                <p class="mt-2 text-white text-medium font-sans"><strong>Lucro:</strong>
+                    <span class="inline-flex items-center ml-2">
+                        <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                            alt="" class="w-5 h-5 mr-2 align-middle">
+                        {{
+                        (investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra) |
+                        number
+                        }}
+                    </span>
+                </p>
+                <p class="mt-2 text-white text-medium font-sans"><strong>Lucro Percentual:</strong> {{
+                    ((investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra) /
+                    investimento.valor_compra) * 100 | number:'1.2-2' }}%
+                </p>
+            </div>
 
             <button (click)="openEditModal(investimento)" class="btn btn-primary mt-4 mb-3">Editar</button>
         </div>
