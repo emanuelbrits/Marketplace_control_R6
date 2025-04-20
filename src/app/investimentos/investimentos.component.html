@@ -1,45 +1,23 @@
 <div class="bg-gray-800 p-4 shadow-md font-sans">
-    <div class="flex justify-end max-w-7xl mx-auto">
+    <div class="flex items-center justify-between max-w-7xl mx-auto">
+        <!-- Logo ou Título -->
+        <div class="text-white text-xl font-bold">
+            <a href="/" class="text-white hover:text-gray-300">Home</a>
+        </div>
 
-        <!-- Botão de Logout -->
-        <button (click)="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
-            Logout
-        </button>
+        <!-- Botões de navegação -->
+        <div class="flex items-center space-x-4">
+            <a href="/investimentos" class="text-white hover:text-gray-300">Investimentos</a>
+
+            <!-- Botão de Logout -->
+            <button (click)="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                Logout
+            </button>
+        </div>
     </div>
 </div>
 
 <div class="p-4 bg-slate-600">
-
-    <!-- Botões de filtro -->
-    <div class="flex space-x-4 mb-4">
-        <button class="px-4 py-2 rounded-lg">
-            <a href="/" class="text-white hover:text-gray-300">Home</a>
-        </button>
-        <button (click)="statusFiltro = 'aguardando'"
-            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'aguardando', 'bg-gray-500 text-gray-200': statusFiltro !== 'aguardando' }"
-            class="px-4 py-2 rounded-lg">
-            Aguardando venda
-        </button>
-        <button (click)="statusFiltro = 'vendidos'"
-            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'vendidos', 'bg-gray-500 text-gray-200': statusFiltro !== 'vendidos' }"
-            class="px-4 py-2 rounded-lg">
-            Vendidos
-        </button>
-        <hr>
-    </div>
-
-    <div class="flex space-x-4 mb-4">
-        <button (click)="statusOrdenacao = 'recente'"
-            [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'recente', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'recente' }"
-            class="px-4 py-2 rounded-lg">
-            Mais recentes
-        </button>
-        <button (click)="statusOrdenacao = 'antigo'"
-            [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'antigo', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'antigo' }"
-            class="px-4 py-2 rounded-lg">
-            Mais antigos
-        </button>
-    </div>
 
     <div class="mb-4 p-4 bg-black rounded-lg shadow">
         <div class="flex justify-around">
@@ -68,6 +46,34 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Botões de filtro -->
+    <div class="flex space-x-4 mb-4">
+        <button (click)="statusFiltro = 'aguardando'"
+            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'aguardando', 'bg-gray-500 text-gray-200': statusFiltro !== 'aguardando' }"
+            class="px-4 py-2 rounded-lg">
+            Aguardando venda
+        </button>
+        <button (click)="statusFiltro = 'vendidos'"
+            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'vendidos', 'bg-gray-500 text-gray-200': statusFiltro !== 'vendidos' }"
+            class="px-4 py-2 rounded-lg">
+            Vendidos
+        </button>
+        <hr>
+    </div>
+
+    <div class="flex space-x-4 mb-4">
+        <button (click)="statusOrdenacao = 'recente'"
+            [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'recente', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'recente' }"
+            class="px-4 py-2 rounded-lg">
+            Mais recentes
+        </button>
+        <button (click)="statusOrdenacao = 'antigo'"
+            [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'antigo', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'antigo' }"
+            class="px-4 py-2 rounded-lg">
+            Mais antigos
+        </button>
     </div>
 
     <!-- Indicador de carregamento -->
