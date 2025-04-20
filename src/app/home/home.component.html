@@ -19,17 +19,27 @@
 </div>
 
 <div class="p-4 bg-slate-600">
+    <div class="p-4">
+        <input type="text" [(ngModel)]="itemIdInput" placeholder="Digite o ID do item"
+            class="input input-bordered border border-gray-400 p-2 rounded" />
+        <button (click)="adicionarItem(itemIdInput)" class="btn bg-blue-500 text-white px-4 py-2 ml-2 rounded">
+            Adicionar Item
+        </button>
+    </div>
+
     <h1 class="text-2xl font-bold mb-4 text-white">Filtrar Itens</h1>
 
     <div class="mb-4 flex flex-col">
-        <select [(ngModel)]="filtroTipo" (ngModelChange)="onTipoChange()" class="p-2 rounded text-white w-80 mb-4 bg-black">
+        <select [(ngModel)]="filtroTipo" (ngModelChange)="onTipoChange()"
+            class="p-2 rounded text-white w-80 mb-4 bg-black">
             <option value="">Todos os Tipos</option>
             <option *ngFor="let tipo of opcoesTipo" [value]="tipo">{{ tipo }}</option>
         </select>
 
         <!-- Filtro de Arma -->
         <div *ngIf="filtroTipo === 'ARMA'">
-            <select [(ngModel)]="filtroArma" (ngModelChange)="applySearch()" class="p-2 rounded text-white w-80 bg-black">
+            <select [(ngModel)]="filtroArma" (ngModelChange)="applySearch()"
+                class="p-2 rounded text-white w-80 bg-black">
                 <option value="">Todas as Armas</option>
                 <option *ngFor="let arma of opcoesArmas" [value]="arma">{{ arma }}</option>
             </select>
@@ -37,7 +47,8 @@
 
         <!-- Filtro de Operador -->
         <div *ngIf="filtroTipo === 'HEADGEAR' || filtroTipo === 'UNIFORM'">
-            <select [(ngModel)]="filtroOperador" (ngModelChange)="applySearch()" class="p-2 rounded text-white w-80 bg-black">
+            <select [(ngModel)]="filtroOperador" (ngModelChange)="applySearch()"
+                class="p-2 rounded text-white w-80 bg-black">
                 <option value="">Todos os Operadores</option>
                 <option *ngFor="let operador of opcoesOperadores" [value]="operador">{{ operador }}</option>
             </select>

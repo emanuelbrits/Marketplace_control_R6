@@ -3,6 +3,7 @@ import { supabase } from '../../supabase-client';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'home-root',
@@ -36,12 +37,14 @@ export class HomeComponent implements OnInit {
   modalAberto = false;
   modalItem: any = { campo1: '', campo2: '', campo3: '', campo4: '' };
 
+  itemIdInput: string = '';
+
   async ngOnInit() {
     await this.carregarItens();
     await this.carregarOpcoes(); // Carregar as opções para os filtros
   }
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private http: HttpClient) { }
 
   async logout() {
     try {
@@ -55,6 +58,44 @@ export class HomeComponent implements OnInit {
     } catch (err) {
       console.error('Erro inesperado ao fazer logout:', err);
     }
+  }
+
+  adicionarItem(itemId: string) {
+    if (!itemId.trim()) {
+      console.warn('Item ID vazio!');
+      return;
+    }
+
+    console.log('Enviando itemId:', itemId);
+
+    this.http.get<any>(`https://getitem-m7s4cidcaa-uc.a.run.app?itemId=${itemId}`)
+      .subscribe({
+        next: async (res) => {
+          console.log('Item recebido:', res);
+
+          // Estrutura esperada da resposta:
+          const novoItem = {
+            id: itemId,
+            nome: res.nome,
+            url_foto: res.url_foto,
+            tipo: res.tipo,
+            arma_operador: res.arma_operador
+          };
+
+          // Fazendo o insert no Supabase
+          const { data, error } = await supabase.from('itens').insert([novoItem]);
+
+          if (error) {
+            console.error('Erro ao inserir no Supabase:', error);
+          } else {
+            window.alert('Item adicionado com sucesso!')
+            window.location.reload();
+          }
+        },
+        error: (err) => {
+          console.error('Erro ao buscar item:', err);
+        }
+      });
   }
 
   async carregarItens() {
