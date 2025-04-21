@@ -143,9 +143,14 @@ export class HomeComponent implements OnInit {
     if (armasError || operadoresError) {
       console.error('Erro ao buscar opções:', armasError?.message, operadoresError?.message);
     } else {
-      // Garantir que as opções sejam únicas utilizando Set
-      this.opcoesArmas = [...new Set(armas?.map((item: { arma_operador: string }) => item.arma_operador) || [])];
-      this.opcoesOperadores = [...new Set(operadores?.map((item: { arma_operador: string }) => item.arma_operador) || [])];
+      // Garantir que as opções sejam únicas e ordenadas alfabeticamente
+      this.opcoesArmas = [...new Set(
+        armas?.map((item: { arma_operador: string }) => item.arma_operador) || []
+      )].sort((a, b) => a.localeCompare(b));
+
+      this.opcoesOperadores = [...new Set(
+        operadores?.map((item: { arma_operador: string }) => item.arma_operador) || []
+      )].sort((a, b) => a.localeCompare(b));
     }
   }
 
