@@ -87,8 +87,7 @@
     <!-- Lista de investimentos -->
     <div *ngIf="!loading && investimentos.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div *ngFor="let investimento of investimentosFiltrados"
-            class="bg-slate-800 shadow rounded text-center group relative"
-            [ngClass]="{ 'border-4 border-green-500': investimento.valor_vendido > 0 }">
+            class="bg-slate-800 shadow rounded text-center group relative">
             <!-- Imagem do item -->
             <div class="relative w-full h-64 overflow-hidden rounded">
                 <img [src]="investimento.foto_url" alt="Imagem do investimento"
@@ -137,7 +136,8 @@
                         <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                             alt="" class="w-5 h-5 mr-2 align-middle">
                         {{
-                        (investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra) |
+                        (investimento.valor_vendido - (investimento.valor_vendido * 0.1) -
+                        investimento.valor_compra).toFixed(0)|
                         number
                         }}
                     </span>
@@ -148,7 +148,10 @@
                 </p>
             </div>
 
-            <button (click)="openEditModal(investimento)" class="btn btn-primary mt-4 mb-3">Editar</button>
+            <div class="flex flex-col items-center">
+                <button (click)="openMarketplace(investimento.id_item)" class="btn btn-primary mt-4 mb-3 w-40">Ver no marketplace</button>
+                <button (click)="openEditModal(investimento)" class="btn btn-primary mt-2 mb-2 w-40">Editar</button>
+            </div>
         </div>
     </div>
 

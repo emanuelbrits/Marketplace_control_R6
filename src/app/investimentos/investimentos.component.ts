@@ -220,6 +220,10 @@ export class InvestimentosComponent implements OnInit {
     this.isModalOpen = true;  // Exibe o modal
   }
 
+  openMarketplace(id: string) {
+    window.open(`https://www.ubisoft.com/en-us/game/rainbow-six/siege/marketplace?route=sell%2Fitem-details&itemId=${id}`)
+  }
+
   // Fechar modal
   closeModal() {
     this.isModalOpen = false;
