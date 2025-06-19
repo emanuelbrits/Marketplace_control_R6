@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { NavbarComponent } from "../shared/navbar/navbar.component";
 
 interface Investimento {
   id: number;
@@ -21,7 +22,7 @@ interface Investimento {
   selector: 'app-investimentos',
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent]
 })
 export class InvestimentosComponent implements OnInit {
   investimentos: Investimento[] = [];
