@@ -5,42 +5,42 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
-  standalone: true,
-  imports: [CommonModule, FormsModule]
+  selector: 'app-register',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css'
 })
-export class LoginComponent {
+export class RegisterComponent {
   email = '';
   password = '';
   errorMessage = '';
   isLoading = false;
-  showPassword: boolean = false;
+  showPassword = false;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
-  async login() {
+  async register() {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signUp({
       email: this.email,
-      password: this.password,
+      password: this.password
     });
 
     this.isLoading = false;
 
     if (error) {
       this.errorMessage = error.message;
-    } else {
-      console.log('Login realizado com sucesso:', data);
-      this.router.navigate(['/']); // Redireciona para a página inicial
+      return;
     }
+
+    // Registro bem-sucedido
+    alert('Registro criado! Verifique seu e-mail para confirmar sua conta.');
+    this.router.navigate(['/login']);
   }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
-
 }
