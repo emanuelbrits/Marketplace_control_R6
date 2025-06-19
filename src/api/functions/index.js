@@ -15,7 +15,7 @@ exports.valorMedio = functions.https.onRequest((req, res) => {
       const { data: html } = await axios.get(url);
       const $ = cheerio.load(html);
       const valores = $('.leading-none');
-      const valorTexto = valores.eq(2).text().trim();
+      const valorTexto = valores.eq(2).text().trim().replace(/[.,]/g, '');
       res.status(200).json({ valorMedio: valorTexto });
     } catch (error) {
       res.status(500).json({ error: 'Erro ao buscar valor médio' });
