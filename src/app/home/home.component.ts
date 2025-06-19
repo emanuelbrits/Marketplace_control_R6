@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
   title = 'Lista de Itens em Cards';
   itens: any[] = [];
   filteredItens: any[] = [];
+  paginaItens: any[] = [];
   loading = true;
   page = 1;
   itensPorPagina = 20;
@@ -148,24 +149,39 @@ export class HomeComponent implements OnInit {
   }
 
   onTipoChange() {
-    // Quando o tipo de item for alterado, limpa os filtros de arma e operador
     this.filtroArma = '';
     this.filtroOperador = '';
-    this.applyPagination(); // Reaplica a paginação e filtros
+    this.applySearch();
   }
 
   applySearch() {
-    // Aplica a busca no array de itens
-    if (this.searchQuery) {
-      this.filteredItens = this.itens.filter(item =>
-        item.nome.toLowerCase().includes(this.searchQuery.toLowerCase()) // Filtro baseado no nome
-      );
-    } else {
-      this.filteredItens = [...this.itens]; // Se não houver busca, mostra todos os itens
-    }
-    // Resetar para a primeira página após aplicar o filtro
+    const termo = this.searchQuery?.toLowerCase() || '';
+
+    this.filteredItens = this.itens.filter(item => {
+      const matchesTipo = this.checkTipoFilter(item);
+
+      const matchesArma = this.filtroTipo === 'ARMA'
+        ? this.filtroArma ? item.arma_operador === this.filtroArma : true
+        : true;
+
+      const matchesOperador = (this.filtroTipo === 'HEADGEAR' || this.filtroTipo === 'UNIFORM')
+        ? this.filtroOperador ? item.arma_operador === this.filtroOperador : true
+        : true;
+
+      const matchesSearch = termo ? item.nome.toLowerCase().includes(termo) : true;
+
+      return matchesTipo && matchesArma && matchesOperador && matchesSearch;
+    });
+
+    this.totalItens = this.filteredItens.length;
     this.page = 1;
-    this.applyPagination(); // Aplica a paginação após o filtro
+    this.atualizarItensDaPagina();
+  }
+
+  atualizarItensDaPagina() {
+    const inicio = (this.page - 1) * this.itensPorPagina;
+    const fim = this.page * this.itensPorPagina;
+    this.paginaItens = this.filteredItens.slice(inicio, fim);
   }
 
   applyPagination() {
@@ -216,17 +232,17 @@ export class HomeComponent implements OnInit {
   }
 
   // Funções de navegação
-  proximaPagina() {
-    if (this.page * this.itensPorPagina < this.totalItens) {
-      this.page++;
-      this.applyPagination();
-    }
-  }
-
   paginaAnterior() {
     if (this.page > 1) {
       this.page--;
-      this.applyPagination();
+      this.atualizarItensDaPagina();
+    }
+  }
+
+  proximaPagina() {
+    if (this.page * this.itensPorPagina < this.totalItens) {
+      this.page++;
+      this.atualizarItensDaPagina();
     }
   }
 
