@@ -1,11 +1,11 @@
-<div class="h-screen flex flex-col items-center justify-center bg-gradient-to-r from-orange-600 to-orange-900">
+<div class="flex flex-col md:flex-row h-screen items-center justify-center bg-gradient-to-r from-orange-600 to-orange-900">
     <div class="flex flex-col justify-center h-[20%] w-screen text-white font-bold text-4xl px-8">
         <h1>Olá</h1>
         <h1>Seja bem-vindo!</h1>
     </div>
-    <div class="h-[80%] bg-white px-8 rounded-t-3xl shadow-md w-screen">
+    <div class="flex flex-col md:justify-center h-[80%] md:h-screen bg-white px-8 rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none shadow-md w-screen">
 
-        <form (submit)="login()" class="pt-20">
+        <form (submit)="login()" class="pt-20 md:pt-0">
             <!-- E-mail -->
             <div class="mb-4">
                 <label for="email"
@@ -54,7 +54,7 @@
 
             <!-- Botão de Login -->
             <button type="submit"
-                class="w-full bg-gradient-to-r mt-20 from-orange-600 to-orange-900 text-white text-2xl p-2 rounded-3xl font-bold transition-colors hover:from-orange-700 hover:to-orange-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+                class="w-full bg-gradient-to-r mt-20 md:mt-2 from-orange-600 to-orange-900 text-white text-2xl p-2 rounded-3xl font-bold transition-colors hover:from-orange-700 hover:to-orange-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
                 [disabled]="isLoading">
                 {{ isLoading ? 'Entrando...' : 'Entrar' }}
             </button>
