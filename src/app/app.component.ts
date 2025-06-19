@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { supabase } from '../supabase-client';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { NavbarComponent } from "./shared/navbar/navbar.component";
 
 @Component({
   selector: 'app-root',
