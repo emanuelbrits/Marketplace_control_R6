@@ -148,31 +148,97 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onTipoChange() {
-    this.filtroArma = '';
-    this.filtroOperador = '';
+  mostrarFiltros = false;
+  filtroArmaSelecionada: string[] = [];
+  filtroOperadorSelecionado: string[] = [];
+
+  alternarArmaSelecionada(arma: string) {
+    const index = this.filtroArmaSelecionada.indexOf(arma);
+    if (index >= 0) {
+      this.filtroArmaSelecionada.splice(index, 1);
+    } else {
+      this.filtroArmaSelecionada.push(arma);
+    }
     this.applySearch();
   }
 
+  alternarOperadorSelecionado(operador: string) {
+    const index = this.filtroOperadorSelecionado.indexOf(operador);
+    if (index >= 0) {
+      this.filtroOperadorSelecionado.splice(index, 1);
+    } else {
+      this.filtroOperadorSelecionado.push(operador);
+    }
+    this.applySearch();
+  }
+
+  limparFiltros() {
+    this.filtroTipo = '';
+    this.filtroArmaSelecionada = [];
+    this.filtroOperadorSelecionado = [];
+    this.searchQuery = '';
+    this.applySearch();
+  }
+
+  checkboxesArmas: { [key: string]: boolean } = {};
+  checkboxesOperadores: { [key: string]: boolean } = {};
+
+  chunkedArmas: string[][] = [];
+  chunkedOperadores: string[][] = [];
+
+  chunkArray(array: string[], tamanho: number): string[][] {
+    const result = [];
+    for (let i = 0; i < array.length; i += tamanho) {
+      result.push(array.slice(i, i + tamanho));
+    }
+    return result;
+  }
+
+  onTipoChange() {
+    this.filtroArmaSelecionada = [];
+    this.filtroOperadorSelecionado = [];
+
+    if (this.filtroTipo === 'ARMA') {
+      this.chunkedArmas = this.chunkArray(this.opcoesArmas, 15);
+    }
+
+    if (this.filtroTipo === 'HEADGEAR' || this.filtroTipo === 'UNIFORM') {
+      this.chunkedOperadores = this.chunkArray(this.opcoesOperadores, 15);
+    }
+
+    this.applySearch();
+  }
+
+  limparFiltroTipo() {
+    this.filtroTipo = '';
+    this.onTipoChange();
+  }
+
   applySearch() {
-    const termo = this.searchQuery?.toLowerCase() || '';
+    let resultado = this.itens;
 
-    this.filteredItens = this.itens.filter(item => {
-      const matchesTipo = this.checkTipoFilter(item);
+    if (this.filtroTipo) {
+      resultado = resultado.filter(i => this.checkTipoFilter(i));
+    }
 
-      const matchesArma = this.filtroTipo === 'ARMA'
-        ? this.filtroArma ? item.arma_operador === this.filtroArma : true
-        : true;
+    if (this.filtroTipo === 'ARMA' && this.filtroArmaSelecionada.length > 0) {
+      resultado = resultado.filter(i => this.filtroArmaSelecionada.includes(i.arma_operador));
+    }
 
-      const matchesOperador = (this.filtroTipo === 'HEADGEAR' || this.filtroTipo === 'UNIFORM')
-        ? this.filtroOperador ? item.arma_operador === this.filtroOperador : true
-        : true;
+    if (
+      (this.filtroTipo === 'HEADGEAR' || this.filtroTipo === 'UNIFORM') &&
+      this.filtroOperadorSelecionado.length > 0
+    ) {
+      resultado = resultado.filter(i => this.filtroOperadorSelecionado.includes(i.arma_operador));
+    }
 
-      const matchesSearch = termo ? item.nome.toLowerCase().includes(termo) : true;
+    if (this.searchQuery?.trim()) {
+      resultado = resultado.filter(i =>
+        i.nome.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
 
-      return matchesTipo && matchesArma && matchesOperador && matchesSearch;
-    });
-
+    this.filteredItens = resultado;
     this.totalItens = this.filteredItens.length;
     this.page = 1;
     this.atualizarItensDaPagina();
