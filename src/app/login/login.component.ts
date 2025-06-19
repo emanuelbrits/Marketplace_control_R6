@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { supabase } from '../supabase-client';
+import { supabase } from '../../supabase-client';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -16,8 +16,9 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
   isLoading = false;
+  showPassword: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   async login() {
     this.isLoading = true;
@@ -47,4 +48,9 @@ export class LoginComponent {
       this.errorMessage = error.message;
     }
   }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
 }
