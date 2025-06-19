@@ -23,6 +23,8 @@ export class HomeComponent implements OnInit {
   totalItens = 0;
   Math = Math;
   searchQuery = '';
+  itemIdInput: string = '';
+  isLoading = false;
 
   // Filtros
   filtroTipo: string = '';
@@ -44,6 +46,50 @@ export class HomeComponent implements OnInit {
   }
 
   constructor(private router: Router, private http: HttpClient) { }
+
+  adicionarItem(itemId: string) {
+    this.isLoading = true;
+    if (!itemId.trim()) {
+      console.warn('Item ID vazio!');
+      this.isLoading = false;
+      return;
+    }
+
+    console.log('Enviando itemId:', itemId);
+
+    this.http.get<any>(`https://getitem-m7s4cidcaa-uc.a.run.app?itemId=${itemId}`)
+      .subscribe({
+        next: async (res) => {
+          console.log('Item recebido:', res);
+
+          // Estrutura esperada da resposta:
+          const novoItem = {
+            id: itemId,
+            nome: res.nome,
+            url_foto: res.url_foto,
+            tipo: res.tipo,
+            arma_operador: res.arma_operador
+          };
+
+          // Fazendo o insert no Supabase
+          const { data, error } = await supabase.from('itens').insert([novoItem]);
+
+          this.isLoading = false;
+
+          if (error) {
+            console.error('Erro ao inserir no Supabase:', error);
+            this.isLoading = false;
+          } else {
+            window.alert('Item adicionado com sucesso!')
+            window.location.reload();
+          }
+        },
+        error: (err) => {
+          console.error('Erro ao buscar item:', err);
+          this.isLoading = false;
+        }
+      });
+  }
 
   async carregarItens() {
     this.loading = true;
