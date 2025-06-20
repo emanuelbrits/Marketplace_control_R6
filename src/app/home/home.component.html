@@ -2,14 +2,24 @@
 
 <div class="p-4 bg-gradient-to-t from-black to-gray-900">
 
-    <div class="py-4 flex flex-row justify-start">
-        <input type="text" [(ngModel)]="itemIdInput" placeholder="Digite o ID do item"
-            class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded" />
-        <button (click)="adicionarItem(itemIdInput)"
-            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded"
-            [disabled]="isLoading">
-            {{ isLoading ? 'Adicionando Item...' : 'Adicionar Item' }}
-        </button>
+    <div class="py-4 flex flex-col justify-start">
+        <div class="flex flex-row">
+            <input type="text" [(ngModel)]="itemIdInput" placeholder="Digite o ID do item"
+                class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded" />
+            <button (click)="adicionarItem(itemIdInput)"
+                class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded"
+                [disabled]="isLoading">
+                {{ isLoading ? 'Adicionando Item...' : 'Adicionar Item' }}
+            </button>
+        </div>
+        <div *ngIf="mensagem" class="mb-2">
+            <div [ngClass]="{
+                'bg-green-100 text-green-800 border-green-400': tipoMensagem === 'success',
+                'bg-red-100 text-red-800 border-red-400': tipoMensagem === 'error'
+                }" class="border px-4 py-2 rounded w-[21rem] mt-4">
+                {{ mensagem }}
+            </div>
+        </div>
     </div>
 
     <div class="flex flex-row gap-2 md:gap-6">

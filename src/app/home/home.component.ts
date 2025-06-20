@@ -41,6 +41,9 @@ export class HomeComponent implements OnInit {
   modalAberto = false;
   modalItem: any = { campo1: '', campo2: '', campo3: '', campo4: '' };
 
+  mensagem: string = '';
+  tipoMensagem: 'success' | 'error' | '' = '';
+
   async ngOnInit() {
     await this.carregarItens();
     await this.carregarOpcoes(); // Carregar as opções para os filtros
@@ -51,45 +54,56 @@ export class HomeComponent implements OnInit {
   adicionarItem(itemId: string) {
     this.isLoading = true;
     if (!itemId.trim()) {
-      console.warn('Item ID vazio!');
+      this.tipoMensagem = 'error';
+      this.mensagem = 'ID do Item vazio!'
       this.isLoading = false;
       return;
     }
 
     console.log('Enviando itemId:', itemId);
 
-    this.http.get<any>(`https://getitem-m7s4cidcaa-uc.a.run.app?itemId=${itemId}`)
-      .subscribe({
-        next: async (res) => {
-          console.log('Item recebido:', res);
+    this.http.get<any>(`https://getitem-m7s4cidcaa-uc.a.run.app?itemId=${itemId}`).subscribe({
+      next: async (res) => {
+        console.log('Item recebido:', res);
 
-          // Estrutura esperada da resposta:
-          const novoItem = {
-            id: itemId,
-            nome: res.nome,
-            url_foto: res.url_foto,
-            tipo: res.tipo,
-            arma_operador: res.arma_operador
-          };
+        const novoItem = {
+          id: itemId,
+          nome: res.nome,
+          url_foto: res.url_foto,
+          tipo: res.tipo,
+          arma_operador: res.arma_operador
+        };
 
-          // Fazendo o insert no Supabase
-          const { data, error } = await supabase.from('itens').insert([novoItem]);
+        const { data, error } = await supabase.from('itens').insert([novoItem]);
 
-          this.isLoading = false;
+        this.isLoading = false;
 
-          if (error) {
-            console.error('Erro ao inserir no Supabase:', error);
-            this.isLoading = false;
-          } else {
-            window.alert('Item adicionado com sucesso!')
-            window.location.reload();
-          }
-        },
-        error: (err) => {
-          console.error('Erro ao buscar item:', err);
-          this.isLoading = false;
+        if (error) {
+          console.error('Erro ao inserir no Supabase:', error);
+          this.tipoMensagem = 'error';
+          this.mensagem = 'Erro ao adicionar item.';
+        } else {
+          this.tipoMensagem = 'success';
+          this.mensagem = 'Item adicionado com sucesso!';
+          this.itemIdInput = ''; // limpar campo
         }
-      });
+
+        setTimeout(() => {
+          this.mensagem = '';
+          this.tipoMensagem = '';
+        }, 4000);
+      },
+      error: (err) => {
+        console.error('Erro ao buscar item:', err);
+        this.isLoading = false;
+        this.tipoMensagem = 'error';
+        this.mensagem = 'Erro ao buscar o item.';
+        setTimeout(() => {
+          this.mensagem = '';
+          this.tipoMensagem = '';
+        }, 4000);
+      }
+    });
   }
 
   async carregarItens() {
