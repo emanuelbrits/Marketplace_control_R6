@@ -70,13 +70,9 @@ export class InvestimentosComponent implements OnInit {
     // Se o mesmo já estiver aberto, fecha
     if (this.detalheAbertoId === id) {
       this.detalheAbertoId = null;
-    console.log(this.detalheAbertoId);
 
     } else {
       this.detalheAbertoId = id;
-    console.log(this.detalheAbertoId);
-
-
       // Scroll até o card
       setTimeout(() => {
         const elements = this.cardElements?.toArray();
@@ -94,14 +90,12 @@ export class InvestimentosComponent implements OnInit {
   }
 
   setFiltro(filtro: 'aguardando' | 'vendidos') {
-    console.log(this.detalheAbertoId);
     this.detalheAbertoId = null;
     this.statusFiltro = filtro;
 
   }
 
   setOrdenacao(ordem: 'recente' | 'antigo') {
-    console.log(this.detalheAbertoId);
     this.detalheAbertoId = null;
     this.statusOrdenacao = ordem;
   }
