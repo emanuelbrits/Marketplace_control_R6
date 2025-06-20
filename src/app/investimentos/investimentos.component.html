@@ -32,27 +32,28 @@
     </div>
 
     <!-- Botões de filtro -->
+    <!-- Filtro: Aguardando / Vendidos -->
     <div class="flex space-x-4 mb-4">
-        <button (click)="statusFiltro = 'aguardando'"
+        <button (click)="setFiltro('aguardando')"
             [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'aguardando', 'bg-gray-500 text-gray-200': statusFiltro !== 'aguardando' }"
             class="px-4 py-2 rounded-lg">
             Aguardando venda
         </button>
-        <button (click)="statusFiltro = 'vendidos'"
+        <button (click)="setFiltro('vendidos')"
             [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'vendidos', 'bg-gray-500 text-gray-200': statusFiltro !== 'vendidos' }"
             class="px-4 py-2 rounded-lg">
             Vendidos
         </button>
-        <hr>
     </div>
 
+    <!-- Ordenação: Mais recentes / Mais antigos -->
     <div class="flex space-x-4 mb-4">
-        <button (click)="statusOrdenacao = 'recente'"
+        <button (click)="setOrdenacao('recente')"
             [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'recente', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'recente' }"
             class="px-4 py-2 rounded-lg">
             Mais recentes
         </button>
-        <button (click)="statusOrdenacao = 'antigo'"
+        <button (click)="setOrdenacao('antigo')"
             [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'antigo', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'antigo' }"
             class="px-4 py-2 rounded-lg">
             Mais antigos
@@ -72,8 +73,8 @@
         <!-- Card container -->
         <div *ngFor="let investimento of investimentosFiltrados" #cardRef [attr.id]="'card-' + investimento.id_item"
             [ngClass]="{
-    'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[36rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
-  }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
+            'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[36rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
+        }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
 
             <!-- CONTEÚDO PADRÃO - só aparece quando o card está fechado -->
             <ng-container *ngIf="!isDetalheVisivel(investimento.id_item)">

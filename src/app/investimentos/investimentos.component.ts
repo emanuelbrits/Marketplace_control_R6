@@ -60,37 +60,50 @@ export class InvestimentosComponent implements OnInit {
   retornoEstimado = 0
   statusFiltro: 'aguardando' | 'vendidos' = 'aguardando';
   statusOrdenacao: 'recente' | 'antigo' = 'recente';
-  detalhesVisiveis = new Set<string>(); // id_item de cada investimento
+  detalheAbertoId: string | null = null;
 
   icons = { ChevronDown, ChevronUp };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
 
   toggleDetalhes(id: string) {
-    if (this.detalhesVisiveis.has(id)) {
-      this.detalhesVisiveis.delete(id);
+    // Se o mesmo já estiver aberto, fecha
+    if (this.detalheAbertoId === id) {
+      this.detalheAbertoId = null;
+    console.log(this.detalheAbertoId);
+
     } else {
-      this.detalhesVisiveis.add(id);
+      this.detalheAbertoId = id;
+    console.log(this.detalheAbertoId);
 
-      // Executa após renderização
-      this.ngZone.runOutsideAngular(() => {
-        setTimeout(() => {
-          const elements = this.cardElements?.toArray();
-          const cardElement = elements?.find(el => el.nativeElement.id === `card-${id}`);
 
-          if (cardElement) {
-            cardElement.nativeElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center'
-            });
-          }
-        }, 100); // Tempo para esperar o *ngIf renderizar
-      });
+      // Scroll até o card
+      setTimeout(() => {
+        const elements = this.cardElements?.toArray();
+        const cardElement = elements.find(el => el.nativeElement.id === `card-${id}`);
+        cardElement?.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }, 100);
     }
   }
 
   isDetalheVisivel(id: string): boolean {
-    return this.detalhesVisiveis.has(id);
+    return this.detalheAbertoId === id;
+  }
+
+  setFiltro(filtro: 'aguardando' | 'vendidos') {
+    console.log(this.detalheAbertoId);
+    this.detalheAbertoId = null;
+    this.statusFiltro = filtro;
+
+  }
+
+  setOrdenacao(ordem: 'recente' | 'antigo') {
+    console.log(this.detalheAbertoId);
+    this.detalheAbertoId = null;
+    this.statusOrdenacao = ordem;
   }
 
   carregarValoresMedios() {
