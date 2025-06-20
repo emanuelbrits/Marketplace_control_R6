@@ -121,7 +121,24 @@
                 </div>
 
                 <!-- Direita: dados -->
-                <div class="flex flex-col justify-center">
+                <div class="flex flex-col">
+                    <div class="flex justify-between items-center mb-4 lg:mb-20 xl:mb-40">
+                        <div class="text-s px-2 py-1 rounded shadow bg-black text-white border">
+                            <span class="inline-flex items-center">
+                                <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                    class="w-5 h-5 mr-2" />
+                                {{ investimento.valor_compra | number }}
+                            </span>
+                        </div>
+                        <div class="text-s px-2 py-1 rounded shadow bg-black text-white border">
+                            <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
+                                Média 24h:
+                                <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                    class="w-5 h-5 mx-2" />
+                                {{ valoresMedios[investimento.id_item] }}
+                            </span>
+                        </div>
+                    </div>
                     <h1 class="text-white font-semibold text-4xl font-sans mb-2">{{ investimento.nome }}</h1>
                     <h2 class="text-white font-semibold text-lg font-sans mb-2">Tipo: {{ investimento.tipo }}</h2>
                     <p class="text-white font-sans mb-2"><strong>Data de Venda:</strong> {{ investimento.data_venda |
@@ -165,7 +182,7 @@
                         </p>
                     </div>
 
-                    <div class="mt-4 flex justify-center md:justify-start gap-4">
+                    <div class="mt-4 lg:mt-20 xl:mt-40 flex justify-center md:justify-start gap-4">
                         <button (click)="openMarketplace(investimento.id_item)"
                             class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded">Ver
                             no
