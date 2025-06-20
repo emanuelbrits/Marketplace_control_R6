@@ -60,6 +60,10 @@
         </button>
     </div>
 
+    <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applySearch()" placeholder="Buscar por nome"
+        class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded mb-4" />
+
+
     <!-- Indicador de carregamento -->
     <div *ngIf="loading" class="text-white">Carregando investimentos...</div>
 

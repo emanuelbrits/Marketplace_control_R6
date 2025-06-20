@@ -50,6 +50,8 @@ export class InvestimentosComponent implements OnInit {
   constructor(private router: Router, private http: HttpClient, private ngZone: NgZone) { }
 
   investimentos: Investimento[] = [];
+  investimentosFiltradosBusca: any[] = []; // O que será exibido no *ngFor
+  searchQuery: string = '';
   valoresMedios: { [id: string]: string } = {};
   loading = false;
   error: string | null = null;
@@ -116,7 +118,7 @@ export class InvestimentosComponent implements OnInit {
   }
 
   get investimentosFiltrados() {
-    const filtrados = this.investimentos.filter((investimento) =>
+    const filtrados = this.investimentosFiltradosBusca.filter((investimento) =>
       this.statusFiltro === 'aguardando'
         ? investimento.valor_vendido === 0
         : investimento.valor_vendido > 0
@@ -129,8 +131,22 @@ export class InvestimentosComponent implements OnInit {
     });
   }
 
+  applySearch() {
+    const query = this.searchQuery.trim().toLowerCase();
+
+    if (!query) {
+      this.investimentosFiltradosBusca = [...this.investimentos];
+      return;
+    }
+
+    this.investimentosFiltradosBusca = this.investimentos.filter(investimento =>
+      investimento.nome.toLowerCase().includes(query)
+    );
+  }
+
   async ngOnInit() {
     await this.carregarInvestimentos();
+    this.investimentosFiltradosBusca = [...this.investimentos];
     this.carregarValoresMedios();
   }
 
