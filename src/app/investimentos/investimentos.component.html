@@ -70,9 +70,10 @@
     <!-- Lista de investimentos -->
     <div *ngIf="!loading && investimentos.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <!-- Card container -->
-        <div *ngFor="let investimento of investimentosFiltrados" [ngClass]="{
-        'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[36rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
-     }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
+        <div *ngFor="let investimento of investimentosFiltrados" #cardRef [attr.id]="'card-' + investimento.id_item"
+            [ngClass]="{
+    'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[36rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
+  }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
 
             <!-- CONTEÚDO PADRÃO - só aparece quando o card está fechado -->
             <ng-container *ngIf="!isDetalheVisivel(investimento.id_item)">
@@ -110,9 +111,10 @@
             </ng-container>
 
             <!-- CONTEÚDO DETALHADO - só aparece quando o card está aberto -->
-            <div *ngIf="isDetalheVisivel(investimento.id_item)" class="md:grid md:grid-cols-2 gap-4 p-4 text-left h-full">
+            <div *ngIf="isDetalheVisivel(investimento.id_item)"
+                class="md:grid md:grid-cols-2 gap-4 p-4 text-left h-full">
                 <!-- Esquerda: imagem -->
-                <div class="w-full max-h-[100%] overflow-hidden">
+                <div class="flex justify-center w-full max-h-[100%] overflow-hidden">
                     <img [src]="investimento.foto_url" alt="Imagem do investimento"
                         class="object-contain w-full rounded bg-black" />
                 </div>

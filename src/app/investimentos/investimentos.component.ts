@@ -13,6 +13,8 @@ import {
   animate,
   transition,
 } from '@angular/animations';
+import { ViewChildren, ElementRef, QueryList } from '@angular/core';
+import { NgZone } from '@angular/core';
 
 interface Investimento {
   id: number;
@@ -45,6 +47,8 @@ interface Investimento {
   ]
 })
 export class InvestimentosComponent implements OnInit {
+  constructor(private router: Router, private http: HttpClient, private ngZone: NgZone) { }
+
   investimentos: Investimento[] = [];
   valoresMedios: { [id: string]: string } = {};
   loading = false;
@@ -60,19 +64,34 @@ export class InvestimentosComponent implements OnInit {
 
   icons = { ChevronDown, ChevronUp };
 
+  @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
+
   toggleDetalhes(id: string) {
     if (this.detalhesVisiveis.has(id)) {
       this.detalhesVisiveis.delete(id);
     } else {
       this.detalhesVisiveis.add(id);
+
+      // Executa após renderização
+      this.ngZone.runOutsideAngular(() => {
+        setTimeout(() => {
+          const elements = this.cardElements?.toArray();
+          const cardElement = elements?.find(el => el.nativeElement.id === `card-${id}`);
+
+          if (cardElement) {
+            cardElement.nativeElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+        }, 100); // Tempo para esperar o *ngIf renderizar
+      });
     }
   }
 
   isDetalheVisivel(id: string): boolean {
     return this.detalhesVisiveis.has(id);
   }
-
-  constructor(private router: Router, private http: HttpClient) { }
 
   carregarValoresMedios() {
     this.investimentosFiltrados.forEach((item) => {
