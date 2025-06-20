@@ -70,14 +70,14 @@
     <!-- Lista de investimentos -->
     <div *ngIf="!loading && investimentos.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div *ngFor="let investimento of investimentosFiltrados"
-            class="bg-slate-800 shadow rounded text-center group relative">
+            class="bg-slate-800 shadow rounded text-center group relative pb-10">
             <!-- Imagem do item -->
             <div class="relative w-full h-64 overflow-hidden rounded">
                 <img [src]="investimento.foto_url" alt="Imagem do investimento"
                     class="object-contain w-full h-full rounded bg-black" *ngIf="investimento.foto_url" />
                 <!-- Degradê com efeito hover -->
                 <div
-                    class="absolute inset-0 bg-gradient-to-t from-info to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                    class="absolute inset-0 bg-gradient-to-t from-orange-500 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
                 </div>
             </div>
             <div class="absolute top-2 left-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
@@ -99,9 +99,10 @@
             </div>
             <!-- Nome e detalhes -->
             <h2 class="mt-2 text-white font-semibold text-lg font-sans">{{ investimento.nome }}</h2>
+            <h3 class="mt-2 text-white font-semibold text-base font-sans">{{ investimento.tipo }}</h3>
 
             <!-- Detalhes condicional -->
-            <div *ngIf="isDetalheVisivel(investimento.id_item)">
+            <div *ngIf="isDetalheVisivel(investimento.id_item)" @detalheAnimacao>
                 <p class="mt-2 text-white text-medium font-sans">
                     <strong>Data de Venda:</strong> {{ investimento.data_venda | date:'dd/MM/yyyy HH:mm' }}
                 </p>
@@ -111,7 +112,8 @@
                 <p class="mt-2 text-white text-medium font-sans">
                     <strong class="mr-2">Valor Vendido:</strong>
                     <span class="inline-flex items-center">
-                        <img src="https://ubiservices.cdn.ubi.com/...png" alt="" class="w-5 h-5 mr-2 align-middle">
+                        <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                            alt="" class="w-5 h-5 mr-2 align-middle">
                         {{ investimento.valor_vendido | number }}
                     </span>
                 </p>
@@ -120,7 +122,8 @@
                 <div class="flex flex-row text-center justify-evenly">
                     <p class="mt-2 text-white text-medium font-sans"><strong>Lucro:</strong>
                         <span class="inline-flex items-center ml-2">
-                            <img src="https://ubiservices.cdn.ubi.com/...png" alt="" class="w-5 h-5 mr-2 align-middle">
+                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                alt="" class="w-5 h-5 mr-2 align-middle">
                             {{
                             (investimento.valor_vendido - (investimento.valor_vendido * 0.1) -
                             investimento.valor_compra).toFixed(0) | number
@@ -145,11 +148,14 @@
                 </div>
             </div>
 
-            <!-- Botão para mostrar/ocultar -->
-            <button (click)="toggleDetalhes(investimento.id_item)"
-                class="mt-2 mb-2 text-sm text-orange-400 hover:underline">
-                {{ isDetalheVisivel(investimento.id_item) ? 'Esconder detalhes' : 'Mostrar detalhes' }}
-            </button>
+            <div class="w-full flex justify-center">
+                <!-- Botão para mostrar/ocultar detalhes -->
+                <button (click)="toggleDetalhes(investimento.id_item)"
+                    class="absolute -bottom-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow">
+                    <lucide-icon [name]="isDetalheVisivel(investimento.id_item) ? 'chevron-up' : 'chevron-down'"
+                        class="w-5 h-5" />
+                </button>
+            </div>
         </div>
     </div>
 

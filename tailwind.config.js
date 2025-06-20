@@ -3,8 +3,9 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts}",
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [require("daisyui")],
+  theme: {},
+  plugins: [
+    require("daisyui"), require('tailwindcss-animated')
+  ],
+
 };

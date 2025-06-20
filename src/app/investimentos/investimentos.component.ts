@@ -5,11 +5,20 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../shared/navbar/navbar.component";
+import { ChevronDown, ChevronUp, LucideAngularModule } from 'lucide-angular';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+} from '@angular/animations';
 
 interface Investimento {
   id: number;
   id_item: string;
   nome: string;
+  tipo: string; // Adiciona tipo opcional
   valor_compra: number;
   valor_vendido: number;
   data_compra: string;
@@ -22,7 +31,18 @@ interface Investimento {
   selector: 'app-investimentos',
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent]
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule],
+  animations: [
+    trigger('detalheAnimacao', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('2000ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+      transition(':leave', [
+        animate('2000ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
+      ]),
+    ])
+  ]
 })
 export class InvestimentosComponent implements OnInit {
   investimentos: Investimento[] = [];
@@ -36,16 +56,20 @@ export class InvestimentosComponent implements OnInit {
   retornoEstimado = 0
   statusFiltro: 'aguardando' | 'vendidos' = 'aguardando';
   statusOrdenacao: 'recente' | 'antigo' = 'recente';
-  detalhesVisiveis: { [key: string]: boolean } = {};
+  detalhesVisiveis = new Set<string>(); // id_item de cada investimento
 
-  // Alterna exibição
-  toggleDetalhes(itemId: string) {
-    this.detalhesVisiveis[itemId] = !this.detalhesVisiveis[itemId];
+  icons = { ChevronDown, ChevronUp };
+
+  toggleDetalhes(id: string) {
+    if (this.detalhesVisiveis.has(id)) {
+      this.detalhesVisiveis.delete(id);
+    } else {
+      this.detalhesVisiveis.add(id);
+    }
   }
 
-  // Verifica se está visível
-  isDetalheVisivel(itemId: string): boolean {
-    return this.detalhesVisiveis[itemId];
+  isDetalheVisivel(id: string): boolean {
+    return this.detalhesVisiveis.has(id);
   }
 
   constructor(private router: Router, private http: HttpClient) { }
@@ -121,7 +145,7 @@ export class InvestimentosComponent implements OnInit {
           valor_compra,
           valor_vendido,
           data_compra,
-          itens (nome, url_foto)
+          itens (nome, url_foto, tipo)
         `)
         .eq('id_usuario', user.id) // Filtra pelo ID do usuário
         .order('data_compra', { ascending: true }); // Ordena por data_compra
@@ -154,6 +178,7 @@ export class InvestimentosComponent implements OnInit {
           id: item.id,
           id_item: item.id_item,
           nome: item.itens.nome,
+          tipo: item.itens.tipo,
           valor_compra: item.valor_compra,
           valor_vendido: item.valor_vendido,
           data_compra: item.data_compra,
