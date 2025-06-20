@@ -69,89 +69,114 @@
 
     <!-- Lista de investimentos -->
     <div *ngIf="!loading && investimentos.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div *ngFor="let investimento of investimentosFiltrados"
-            class="bg-slate-800 shadow rounded text-center group relative pb-10">
-            <!-- Imagem do item -->
-            <div class="relative w-full h-64 overflow-hidden rounded">
-                <img [src]="investimento.foto_url" alt="Imagem do investimento"
-                    class="object-contain w-full h-full rounded bg-black" *ngIf="investimento.foto_url" />
-                <!-- Degradê com efeito hover -->
-                <div
-                    class="absolute inset-0 bg-gradient-to-t from-orange-500 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+        <!-- Card container -->
+        <div *ngFor="let investimento of investimentosFiltrados" [ngClass]="{
+        'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[36rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
+     }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
+
+            <!-- CONTEÚDO PADRÃO - só aparece quando o card está fechado -->
+            <ng-container *ngIf="!isDetalheVisivel(investimento.id_item)">
+                <!-- Imagem -->
+                <div class="relative w-full h-64 overflow-hidden rounded p-2">
+                    <img [src]="investimento.foto_url" alt="Imagem do investimento"
+                        class="object-contain w-full h-full rounded bg-black" *ngIf="investimento.foto_url" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-orange-500 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                    </div>
                 </div>
-            </div>
-            <div class="absolute top-2 left-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
-                <span class="inline-flex items-center">
-                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                        alt="" class="w-5 h-5 mr-2 align-middle">
-                    {{ investimento.valor_compra | number }}
-                </span>
-            </div>
-            <div class="absolute top-2 right-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
-                <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
-                    Média 24h:
-                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                        alt="" class="w-5 h-5 mx-2" />
-                    {{ valoresMedios[investimento.id_item] }}
-                </span>
 
-                <span *ngIf="!valoresMedios[investimento.id_item]">Carregando...</span>
-            </div>
-            <!-- Nome e detalhes -->
-            <h2 class="mt-2 text-white font-semibold text-lg font-sans">{{ investimento.nome }}</h2>
-            <h3 class="mt-2 text-white font-semibold text-base font-sans">{{ investimento.tipo }}</h3>
-
-            <!-- Detalhes condicional -->
-            <div *ngIf="isDetalheVisivel(investimento.id_item)" @detalheAnimacao>
-                <p class="mt-2 text-white text-medium font-sans">
-                    <strong>Data de Venda:</strong> {{ investimento.data_venda | date:'dd/MM/yyyy HH:mm' }}
-                </p>
-                <p class="mt-2 text-white text-medium font-sans">
-                    <strong>Valor Mínimo de Venda:</strong> {{ investimento.valor_minimo_venda | number }}
-                </p>
-                <p class="mt-2 text-white text-medium font-sans">
-                    <strong class="mr-2">Valor Vendido:</strong>
+                <!-- Selos superiores -->
+                <div class="absolute top-2 left-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
                     <span class="inline-flex items-center">
                         <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                            alt="" class="w-5 h-5 mr-2 align-middle">
-                        {{ investimento.valor_vendido | number }}
+                            class="w-5 h-5 mr-2" />
+                        {{ investimento.valor_compra | number }}
                     </span>
-                </p>
-
-                <!-- Cálculos de Lucro -->
-                <div class="flex flex-row text-center justify-evenly">
-                    <p class="mt-2 text-white text-medium font-sans"><strong>Lucro:</strong>
-                        <span class="inline-flex items-center ml-2">
-                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                                alt="" class="w-5 h-5 mr-2 align-middle">
-                            {{
-                            (investimento.valor_vendido - (investimento.valor_vendido * 0.1) -
-                            investimento.valor_compra).toFixed(0) | number
-                            }}
-                        </span>
-                    </p>
-                    <p class="mt-2 text-white text-medium font-sans">
-                        <strong>Lucro Percentual:</strong>
-                        {{
-                        ((investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra) /
-                        investimento.valor_compra) * 100
-                        | number:'1.2-2'
-                        }}%
-                    </p>
+                </div>
+                <div class="absolute top-2 right-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
+                    <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
+                        Média 24h:
+                        <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                            class="w-5 h-5 mx-2" />
+                        {{ valoresMedios[investimento.id_item] }}
+                    </span>
                 </div>
 
-                <div class="flex flex-col items-center">
-                    <button (click)="openMarketplace(investimento.id_item)" class="btn btn-primary mt-4 mb-3 w-40">Ver
-                        no
-                        marketplace</button>
-                    <button (click)="openEditModal(investimento)" class="btn btn-primary mt-2 mb-2 w-40">Editar</button>
+                <!-- Nome e tipo -->
+                <div class="flex flex-col items-center justify-center py-2">
+                    <h2 class="text-white font-semibold text-lg font-sans">{{ investimento.nome }}</h2>
+                    <h3 class="text-white font-semibold text-base font-sans">{{ investimento.tipo }}</h3>
+                </div>
+            </ng-container>
+
+            <!-- CONTEÚDO DETALHADO - só aparece quando o card está aberto -->
+            <div *ngIf="isDetalheVisivel(investimento.id_item)" class="md:grid md:grid-cols-2 gap-4 p-4 text-left h-full">
+                <!-- Esquerda: imagem -->
+                <div class="w-full max-h-[100%] overflow-hidden">
+                    <img [src]="investimento.foto_url" alt="Imagem do investimento"
+                        class="object-contain w-full rounded bg-black" />
+                </div>
+
+                <!-- Direita: dados -->
+                <div class="flex flex-col justify-center">
+                    <h1 class="text-white font-semibold text-4xl font-sans mb-2">{{ investimento.nome }}</h1>
+                    <h2 class="text-white font-semibold text-lg font-sans mb-2">Tipo: {{ investimento.tipo }}</h2>
+                    <p class="text-white font-sans mb-2"><strong>Data de Venda:</strong> {{ investimento.data_venda |
+                        date:'dd/MM/yyyy HH:mm' }}</p>
+                    <p class="text-white font-sans mb-2">
+                        <strong>Valor Mínimo de Venda:</strong>
+                        <span class="inline-flex items-center ml-2">
+                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                class="w-5 h-5 mr-2" />
+                            {{ investimento.valor_minimo_venda | number }}
+                        </span>
+                    </p>
+                    <p class="text-white font-sans mb-2">
+                        <strong>Valor Vendido:</strong>
+                        <span class="inline-flex items-center ml-2">
+                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                class="w-5 h-5 mr-2" />
+                            {{ investimento.valor_vendido | number }}
+                        </span>
+                    </p>
+
+                    <div class="mt-2">
+                        <p class="text-white text-medium font-sans"><strong>Lucro:</strong>
+                            <span class="inline-flex items-center ml-2">
+                                <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                    alt="" class="w-5 h-5 mr-2 align-middle">
+                                {{
+                                (investimento.valor_vendido - (investimento.valor_vendido * 0.1) -
+                                investimento.valor_compra).toFixed(0) | number
+                                }}
+                            </span>
+                        </p>
+                        <p class="mt-2 text-white text-medium font-sans">
+                            <strong>Lucro Percentual:</strong>
+                            {{
+                            ((investimento.valor_vendido - (investimento.valor_vendido * 0.1) -
+                            investimento.valor_compra) /
+                            investimento.valor_compra) * 100
+                            | number:'1.2-2'
+                            }}%
+                        </p>
+                    </div>
+
+                    <div class="mt-4 flex justify-center md:justify-start gap-4">
+                        <button (click)="openMarketplace(investimento.id_item)"
+                            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded">Ver
+                            no
+                            marketplace</button>
+                        <button (click)="openEditModal(investimento)"
+                            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded">Editar</button>
+                    </div>
                 </div>
             </div>
 
+            <!-- Botão de abrir/fechar -->
             <div class="w-full flex justify-center">
-                <!-- Botão para mostrar/ocultar detalhes -->
                 <button (click)="toggleDetalhes(investimento.id_item)"
-                    class="absolute -bottom-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow">
+                    class="absolute -bottom-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow">
                     <lucide-icon [name]="isDetalheVisivel(investimento.id_item) ? 'chevron-up' : 'chevron-down'"
                         class="w-5 h-5" />
                 </button>
