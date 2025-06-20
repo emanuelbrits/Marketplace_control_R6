@@ -31,14 +31,22 @@ export class InvestimentosComponent implements OnInit {
   error: string | null = null;
   isModalOpen = false;  // Controla a exibição do modal
   currentInvestimento: Investimento = {} as Investimento;
-
   quantidadeInvestida = 0; // Valor total gasto
   retornoObtido = 0; // Valor total de retorno
   retornoEstimado = 0
-
   statusFiltro: 'aguardando' | 'vendidos' = 'aguardando';
-
   statusOrdenacao: 'recente' | 'antigo' = 'recente';
+  detalhesVisiveis: { [key: string]: boolean } = {};
+
+  // Alterna exibição
+  toggleDetalhes(itemId: string) {
+    this.detalhesVisiveis[itemId] = !this.detalhesVisiveis[itemId];
+  }
+
+  // Verifica se está visível
+  isDetalheVisivel(itemId: string): boolean {
+    return this.detalhesVisiveis[itemId];
+  }
 
   constructor(private router: Router, private http: HttpClient) { }
 
@@ -74,7 +82,7 @@ export class InvestimentosComponent implements OnInit {
   async ngOnInit() {
     await this.carregarInvestimentos();
     this.carregarValoresMedios();
-  }  
+  }
 
   async logout() {
     try {
