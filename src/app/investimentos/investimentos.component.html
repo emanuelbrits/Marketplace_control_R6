@@ -77,7 +77,7 @@
         <!-- Card container -->
         <div *ngFor="let investimento of investimentosFiltrados" #cardRef [attr.id]="'card-' + investimento.id_item"
             [ngClass]="{
-            'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[44rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
+            'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[46rem] xl:h-[50rem]': isDetalheVisivel(investimento.id_item)
         }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
 
             <!-- CONTEÚDO PADRÃO - só aparece quando o card está fechado -->
@@ -126,7 +126,7 @@
 
                 <!-- Direita: dados -->
                 <div class="flex flex-col">
-                    <div class="flex justify-between items-center mb-4 lg:mb-10 xl:mb-20">
+                    <div class="flex justify-between items-center mb-4 lg:mb-10 xl:mb-20 mt-4 lg:mt-0">
                         <div class="text-s px-2 py-1 rounded shadow bg-black text-white border">
                             <span class="inline-flex items-center">
                                 <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
