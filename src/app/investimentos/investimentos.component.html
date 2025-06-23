@@ -77,7 +77,7 @@
         <!-- Card container -->
         <div *ngFor="let investimento of investimentosFiltrados" #cardRef [attr.id]="'card-' + investimento.id_item"
             [ngClass]="{
-            'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[36rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
+            'md:col-span-3 md:row-span-3 lg:col-span-4 lg:h-[44rem] xl:h-[48rem]': isDetalheVisivel(investimento.id_item)
         }" class="bg-slate-800 h-full shadow rounded group relative pb-10 transition-all duration-300 ease-in-out">
 
             <!-- CONTEÚDO PADRÃO - só aparece quando o card está fechado -->
@@ -126,7 +126,7 @@
 
                 <!-- Direita: dados -->
                 <div class="flex flex-col">
-                    <div class="flex justify-between items-center mb-4 lg:mb-20 xl:mb-40">
+                    <div class="flex justify-between items-center mb-4 lg:mb-10 xl:mb-20">
                         <div class="text-s px-2 py-1 rounded shadow bg-black text-white border">
                             <span class="inline-flex items-center">
                                 <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
@@ -143,35 +143,45 @@
                             </span>
                         </div>
                     </div>
-                    <h1 class="text-white font-semibold text-4xl font-sans mb-2">{{ investimento.nome }}</h1>
-                    <h2 class="text-white font-semibold text-lg font-sans mb-2">Tipo: {{ investimento.tipo }}</h2>
-                    <p class="text-white font-sans mb-2"><strong>Data de Venda:</strong> {{ investimento.data_venda |
-                        date:'dd/MM/yyyy HH:mm' }}</p>
-                    <p class="text-white font-sans mb-2">
-                        <strong>Valor Mínimo de Venda:</strong>
-                        <span class="inline-flex items-center ml-2">
-                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                                class="w-5 h-5 mr-2" />
-                            {{ investimento.valor_minimo_venda | number }}
-                        </span>
-                    </p>
-                    <p class="text-white font-sans mb-2">
-                        <strong>Valor Vendido:</strong>
-                        <span class="inline-flex items-center ml-2">
-                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                                class="w-5 h-5 mr-2" />
-                            {{ investimento.valor_vendido | number }}
-                        </span>
-                    </p>
+                    <!-- Campos editáveis -->
+                    <div class="flex flex-col space-y-4">
+                        <h1 class="text-white font-semibold text-4xl font-sans mb-2">{{ investimento.nome }}</h1>
+                        <h2 class="text-white font-semibold text-lg font-sans mb-2">Tipo: {{ investimento.tipo }}</h2>
 
-                    <div class="mt-2">
-                        <p class="text-white text-medium font-sans"><strong>Lucro:</strong>
+                        <label class="text-white font-sans">Valor Compra</label>
+                        <input type="number" [(ngModel)]="investimentoEditando[investimento.id_item].valor_compra"
+                            class="input w-full bg-black text-white" />
+
+                        <label class="text-white font-sans">Valor Vendido</label>
+                        <input type="number" [(ngModel)]="investimentoEditando[investimento.id_item].valor_vendido"
+                            class="input w-full bg-black text-white" />
+
+                        <label class="text-white font-sans">Data Compra</label>
+                        <input type="datetime-local"
+                            [(ngModel)]="investimentoEditando[investimento.id_item].data_compra"
+                            class="input w-full bg-black text-white" />
+                    </div>
+
+                    <!-- Lucro e Lucro percentual -->
+                    <div class="mt-4">
+                        <p class="text-white font-sans mb-2"><strong>Data de Venda:</strong> {{ investimento.data_venda
+                            | date:'dd/MM/yyyy HH:mm' }}</p>
+                        <p class="text-white font-sans mb-2 flex items-center">
+                            <strong>Valor Mínimo de Venda:</strong>
+                            <span class="inline-flex items-center ml-2">
+                                <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                    class="w-5 h-5 mr-2" />
+                                {{ investimento.valor_minimo_venda | number }}
+                            </span>
+                        </p>
+                        <p class="text-white text-medium font-sans flex items-center"><strong>Lucro:</strong>
                             <span class="inline-flex items-center ml-2">
                                 <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                                     alt="" class="w-5 h-5 mr-2 align-middle">
                                 {{
                                 (investimento.valor_vendido - (investimento.valor_vendido * 0.1) -
-                                investimento.valor_compra).toFixed(0) | number
+                                investimento.valor_compra).toFixed(0)
+                                | number
                                 }}
                             </span>
                         </p>
@@ -186,16 +196,26 @@
                         </p>
                     </div>
 
-                    <div class="mt-4 lg:mt-20 xl:mt-40 flex justify-center md:justify-start gap-4">
+                    <!-- Ações -->
+                    <div class="mt-4 flex justify-center md:justify-start gap-4">
                         <button (click)="openMarketplace(investimento.id_item)"
-                            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded">Ver
-                            no
-                            marketplace</button>
-                        <button (click)="openEditModal(investimento)"
-                            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded">Editar</button>
+                            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded-lg">
+                            Ver no marketplace
+                        </button>
+
+                        <button (click)="updateInvestimento(investimento.id_item)"
+                            class="btn bg-gradient-to-r from-green-500 to-green-700 shadow-md text-white ml-2 px-4 py-2 rounded-lg">
+                            Salvar
+                        </button>
+
+                        <button (click)="removeInvestimento(investimento)"
+                            class="bg-gradient-to-r from-red-500 to-red-700 shadow-md text-white px-4 py-2 rounded-lg">
+                            Remover
+                        </button>
                     </div>
                 </div>
             </div>
+
 
             <!-- Botão de abrir/fechar -->
             <div class="w-full flex justify-center">
@@ -211,64 +231,5 @@
     <!-- Mensagem se não houver investimentos -->
     <div *ngIf="!loading && investimentosFiltrados.length === 0" class="text-gray-500">
         Nenhum investimento encontrado.
-    </div>
-</div>
-
-<div *ngIf="isModalOpen"
-    class="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50 font-sans">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <h2 class="text-xl font-bold text-center text-white">Editar Investimento</h2>
-
-        <!-- Formulário de edição -->
-        <form (ngSubmit)="updateInvestimento()">
-
-            <!-- Foto do Investimento -->
-            <div class="mt-4 bg-black flex items-center justify-center p-4 rounded-lg">
-                <img [src]="currentInvestimento.foto_url" alt="Foto do Investimento"
-                    class="w-30 h-48 object-cover rounded-lg" />
-            </div>
-
-            <div class="space-y-4">
-                <h1 class="mt-2 text-3xl font-semibold text-white flex items-center justify-center">
-                    {{currentInvestimento.nome}}</h1>
-
-                <div class="flex flex-col">
-                    <label for="valor_compra" class="text-sm font-semibold text-white">Valor Compra</label>
-                    <input type="number" [(ngModel)]="currentInvestimento.valor_compra" name="valor_compra"
-                        class="input w-full bg-black text-white" required />
-                </div>
-
-                <div class="flex flex-col">
-                    <label for="valor_vendido" class="text-sm font-semibold text-white">Valor Vendido</label>
-                    <input type="number" [(ngModel)]="currentInvestimento.valor_vendido" name="valor_vendido"
-                        class="input w-full bg-black text-white" required />
-                </div>
-
-                <div class="flex flex-col">
-                    <label for="data_compra" class="text-sm font-semibold text-white">Data Compra</label>
-                    <input type="datetime-local" [(ngModel)]="currentInvestimento.data_compra" name="data_compra"
-                        class="input w-full bg-black text-white" required />
-                </div>
-            </div>
-
-            <div class="flex justify-end mt-4">
-                <!-- Botão Fechar -->
-                <button type="button" (click)="closeModal()"
-                    class="text-blue-500 hover:text-blue-100 border-none bg-transparent mr-3">
-                    Fechar
-                </button>
-
-                <!-- Botão Remover -->
-                <button type="button" (click)="removeInvestimento()"
-                    class="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-lg">
-                    Remover
-                </button>
-
-                <!-- Botão Salvar -->
-                <button type="submit" class="btn bg-blue-500 text-white hover:bg-blue-600 ml-2">
-                    Salvar
-                </button>
-            </div>
-        </form>
     </div>
 </div>

@@ -63,12 +63,16 @@ export class InvestimentosComponent implements OnInit {
   statusFiltro: 'aguardando' | 'vendidos' = 'aguardando';
   statusOrdenacao: 'recente' | 'antigo' = 'recente';
   detalheAbertoId: string | null = null;
+  public investimentoEditando: { [key: string]: Investimento } = {};
 
   icons = { ChevronDown, ChevronUp };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
 
   toggleDetalhes(id: string) {
+    const investimentoOriginal = this.investimentosFiltrados.find(item => item.id_item === id);
+    this.investimentoEditando[id] = { ...investimentoOriginal };
+
     // Se o mesmo já estiver aberto, fecha
     if (this.detalheAbertoId === id) {
       this.detalheAbertoId = null;
@@ -164,6 +168,17 @@ export class InvestimentosComponent implements OnInit {
     }
   }
 
+  formatDateForInput(dateString: string | null): string {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+
+    return localDate.toISOString().slice(0, 16); // Formato: YYYY-MM-DDTHH:mm
+  }
+
+
   async carregarInvestimentos() {
     try {
       this.loading = true;
@@ -223,7 +238,7 @@ export class InvestimentosComponent implements OnInit {
           tipo: item.itens.tipo,
           valor_compra: item.valor_compra,
           valor_vendido: item.valor_vendido,
-          data_compra: item.data_compra,
+          data_compra: this.formatDateForInput(item.data_compra),
           foto_url: item.itens.url_foto,
           data_venda: dataVenda.toISOString(), // Inclui hora e minuto na data
           valor_minimo_venda: valorMinimoVenda, // Adiciona o valor mínimo de venda
@@ -240,37 +255,47 @@ export class InvestimentosComponent implements OnInit {
     }
   }
 
-  async updateInvestimento() {
-    // Criação da data ajustada para o horário de Brasília
-    const dataCompraLocal = new Date(this.currentInvestimento.data_compra);
-    const dataCompraBrasilia = new Date(dataCompraLocal.getTime() - (dataCompraLocal.getTimezoneOffset() * 60000) + (3 * 60 * 60 * 1000));
+  async updateInvestimento(id: number) {
+    const investimentoAtualizado = this.investimentoEditando[id];
 
-    this.currentInvestimento.data_compra = dataCompraBrasilia.toISOString();
-
-    // Atualiza o investimento
     try {
+      const dataCompraLocal = new Date(investimentoAtualizado.data_compra);
+
+      if (isNaN(dataCompraLocal.getTime())) {
+        this.error = 'Data inválida.';
+        return;
+      }
+
+      const dataCompraBrasilia = new Date(dataCompraLocal.getTime() - (dataCompraLocal.getTimezoneOffset() * 60000) + (3 * 60 * 60 * 1000));
+      const dataCompraISO = dataCompraBrasilia.toISOString();
+
       const { error } = await supabase
         .from('investimento')
         .update({
-          valor_compra: this.currentInvestimento.valor_compra,
-          valor_vendido: this.currentInvestimento.valor_vendido,
-          data_compra: this.currentInvestimento.data_compra,
+          valor_compra: investimentoAtualizado.valor_compra,
+          valor_vendido: investimentoAtualizado.valor_vendido,
+          data_compra: dataCompraISO,
         })
-        .eq('id', this.currentInvestimento.id);
+        .eq('id', investimentoAtualizado.id);
 
       if (error) throw error;
 
-      // Após salvar, recarregue a página
-      window.location.reload(); // Recarrega a página
+      // Atualiza os dados locais após salvar
+      const investimentoOriginal = this.investimentosFiltrados.find(item => item.id_item === id);
+      if (investimentoOriginal) {
+        investimentoOriginal.valor_compra = investimentoAtualizado.valor_compra;
+        investimentoOriginal.valor_vendido = investimentoAtualizado.valor_vendido;
+        investimentoOriginal.data_compra = investimentoAtualizado.data_compra;
+      }
 
     } catch (err: any) {
       this.error = `Erro ao atualizar o investimento: ${err.message}`;
     }
   }
 
-
   // Método para remover o investimento
-  async removeInvestimento() {
+  async removeInvestimento(investimento: Investimento) {
+    this.currentInvestimento = { ...investimento };
     // Confirmação antes de remover
     const confirmDelete = confirm('Tem certeza de que deseja remover este investimento?');
     if (!confirmDelete) return;
@@ -290,18 +315,7 @@ export class InvestimentosComponent implements OnInit {
     }
   }
 
-
-  openEditModal(investimento: Investimento) {
-    this.currentInvestimento = { ...investimento };  // Cria uma cópia para edição
-    this.isModalOpen = true;  // Exibe o modal
-  }
-
   openMarketplace(id: string) {
     window.open(`https://www.ubisoft.com/en-us/game/rainbow-six/siege/marketplace?route=sell%2Fitem-details&itemId=${id}`)
-  }
-
-  // Fechar modal
-  closeModal() {
-    this.isModalOpen = false;
   }
 }
