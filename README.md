@@ -25,6 +25,7 @@ Acesso rápido ao marketplace e opção para editar investimentos.
 https://github.com/user-attachments/assets/abb9e649-fb5f-44b2-a041-60ca8b141076
 
 🚀 Tecnologias Utilizadas
+
 Angular - Framework front-end para construção da SPA.
 
 TypeScript - Linguagem tipada para desenvolvimento seguro e escalável.
