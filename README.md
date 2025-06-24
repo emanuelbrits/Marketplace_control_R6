@@ -24,9 +24,6 @@ Acesso rápido ao marketplace e opção para editar investimentos.
 
 https://github.com/user-attachments/assets/abb9e649-fb5f-44b2-a041-60ca8b141076
 
-https://github.com/user-attachments/assets/d9de1ccf-2954-4b31-b224-6345dcd6d167
-
-
 🚀 Tecnologias Utilizadas
 Angular - Framework front-end para construção da SPA.
 
