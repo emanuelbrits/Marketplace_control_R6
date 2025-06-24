@@ -1,59 +1,62 @@
-# Marketplace
+📊 Gerenciador de Investimentos
+Descrição
+O Gerenciador de Investimentos é uma aplicação web desenvolvida para controlar e visualizar investimentos de forma prática e organizada. A aplicação permite:
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.1.
+Visualização em cards organizados por status e data.
 
-## Development server
+Expansão de cards para exibir detalhes completos do investimento.
 
-To start a local development server, run:
+Cálculo automático de lucro e percentual de retorno.
 
-```bash
-ng serve
-```
+Filtros dinâmicos por status (Aguardando Venda ou Vendidos).
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ordenação por data (Mais recentes ou Mais antigos).
 
-## Code scaffolding
+Scroll automático para centralizar o card selecionado.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Acesso rápido ao marketplace e opção para editar investimentos.
 
-```bash
-ng generate component component-name
-```
+📸 Demonstração
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+![image](https://github.com/user-attachments/assets/bf7b8a51-abfb-4fed-a8e0-910e43478034)
 
-```bash
-ng generate --help
-```
+![image](https://github.com/user-attachments/assets/8cf540dd-6bf9-4bad-9c3e-73793132041b)
 
-## Building
+https://github.com/user-attachments/assets/abb9e649-fb5f-44b2-a041-60ca8b141076
 
-To build the project run:
+https://github.com/user-attachments/assets/d9de1ccf-2954-4b31-b224-6345dcd6d167
 
-```bash
-ng build
-```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+🚀 Tecnologias Utilizadas
+Angular - Framework front-end para construção da SPA.
 
-## Running unit tests
+TypeScript - Linguagem tipada para desenvolvimento seguro e escalável.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+TailwindCSS - Framework de estilização para criação de layouts modernos e responsivos.
 
-```bash
-ng test
-```
+Lucide Icons - Biblioteca de ícones utilizada para melhorar a experiência visual.
 
-## Running end-to-end tests
+Angular Animations - Animações suaves de entrada e saída de elementos.
 
-For end-to-end (e2e) testing, run:
+Zone.js - Gerenciamento das atualizações assíncronas no Angular.
 
-```bash
-ng e2e
-```
+RxJS - (Usado indiretamente) para gerenciamento reativo de dados.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+✨ Funcionalidades
+✅ Visualização de investimentos em layout de cards.
 
-## Additional Resources
+✅ Expansão individual de cards com animação.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+✅ Filtros por status: Aguardando Venda | Vendidos.
+
+✅ Ordenação por data: Mais Recentes | Mais Antigos.
+
+✅ Scroll automático para centralizar o card aberto.
+
+✅ Cálculo automático de lucro e lucro percentual.
+
+✅ Acesso direto ao marketplace.
+
+✅ Edição de informações dos investimentos.
+
+✅ Layout responsivo e otimizado para diferentes tamanhos de tela.
