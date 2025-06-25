@@ -99,7 +99,9 @@
                         {{ investimento.valor_compra | number }}
                     </span>
                 </div>
-                <div class="absolute top-2 right-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
+
+                <div *ngIf="investimento.valor_vendido <= 0"
+                    class="absolute top-2 right-2 text-s px-2 py-1 rounded shadow bg-black text-white border">
                     <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
                         Média 24h:
                         <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
@@ -108,12 +110,23 @@
                     </span>
                 </div>
 
+                <div *ngIf="investimento.valor_vendido > 0" class="absolute top-2 right-2 px-2 py-2 rounded shadow"
+                    [ngClass]="{
+                    'bg-green-600': possuiItem(investimento.id_item),
+                    'bg-red-600': !possuiItem(investimento.id_item)
+                }">
+                    <lucide-icon [name]="possuiItem(investimento.id_item) ? 'check' : 'x'"
+                        class="w-6 h-6 text-white font-extrabold text-lg" />
+                </div>
+
                 <!-- Selos inferiores -->
-                <div class="absolute bottom-[7.4rem] right-[0.6rem] text-s px-2 py-2 rounded-full shadow" [ngClass]="{
+                <div *ngIf="investimento.valor_vendido <= 0"
+                    class="absolute bottom-[7.4rem] right-[0.6rem] text-s px-2 py-2 rounded-full shadow" [ngClass]="{
                     'bg-green-600': investimento.data_vendaDate <= data_atual,
                     'bg-orange-600': investimento.data_vendaDate > data_atual
                 }">
-                    <lucide-icon [name]="investimento.data_vendaDate <= data_atual ? 'alarm-clock-check' : 'alarm-clock-minus'"
+                    <lucide-icon
+                        [name]="investimento.data_vendaDate <= data_atual ? 'alarm-clock-check' : 'alarm-clock-minus'"
                         class="w-6 h-6 text-white font-extrabold text-lg" />
                 </div>
 

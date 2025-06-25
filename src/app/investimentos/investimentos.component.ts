@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../shared/navbar/navbar.component";
-import { ChevronDown, ChevronUp,AlarmClockCheck, AlarmClockMinus, LucideAngularModule } from 'lucide-angular';
+import { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, LucideAngularModule } from 'lucide-angular';
 import {
   trigger,
   state,
@@ -67,9 +67,15 @@ export class InvestimentosComponent implements OnInit {
   public investimentoEditando: { [key: string]: Investimento } = {};
   data_atual: Date = new Date();
 
-  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus };
+  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
+
+  possuiItem(id: string): boolean {
+    return this.investimentos.some(investimento =>
+      investimento.id_item === id && investimento.valor_vendido === 0
+    );
+  }
 
   toggleDetalhes(id: string) {
     const investimentoOriginal = this.investimentosFiltrados.find(item => item.id_item === id);
@@ -234,7 +240,7 @@ export class InvestimentosComponent implements OnInit {
         if (item.valor_vendido > 0) {
           totalRetorno += (item.valor_vendido * 0.9) - item.valor_compra; // Subtraindo 10% do valor vendido
         }
-        
+
         return {
           id: item.id,
           id_item: item.id_item,
