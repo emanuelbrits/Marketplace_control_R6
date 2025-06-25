@@ -157,13 +157,23 @@
                                 {{ investimento.valor_compra | number }}
                             </span>
                         </div>
-                        <div class="text-s px-2 py-1 rounded shadow bg-black text-white border">
+
+                        <div *ngIf="investimento.valor_vendido <= 0"
+                            class="text-s px-2 py-1 rounded shadow bg-black text-white border">
                             <span *ngIf="valoresMedios[investimento.id_item]" class="inline-flex items-center">
                                 Média 24h:
                                 <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                                     class="w-5 h-5 mx-2" />
                                 {{ valoresMedios[investimento.id_item] }}
                             </span>
+                        </div>
+
+                        <div *ngIf="investimento.valor_vendido > 0" class="px-2 py-2 rounded shadow" [ngClass]="{
+                                'bg-green-600': possuiItem(investimento.id_item),
+                                'bg-red-600': !possuiItem(investimento.id_item)
+                            }">
+                            <lucide-icon [name]="possuiItem(investimento.id_item) ? 'check' : 'x'"
+                                class="w-6 h-6 text-white font-extrabold text-lg" />
                         </div>
                     </div>
                     <!-- Campos editáveis -->
