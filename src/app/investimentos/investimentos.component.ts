@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../shared/navbar/navbar.component";
-import { ChevronDown, ChevronUp, LucideAngularModule } from 'lucide-angular';
+import { ChevronDown, ChevronUp,AlarmClockCheck, AlarmClockMinus, LucideAngularModule } from 'lucide-angular';
 import {
   trigger,
   state,
@@ -25,7 +25,8 @@ interface Investimento {
   valor_vendido: number;
   data_compra: string;
   foto_url: string;
-  data_venda: string; // Nova variável para a data de venda
+  data_venda: string;
+  data_vendaDate: Date; // Nova variável para a data de venda
   valor_minimo_venda: number; // Nova variável para o valor mínimo de venda
 }
 
@@ -64,8 +65,9 @@ export class InvestimentosComponent implements OnInit {
   statusOrdenacao: 'recente' | 'antigo' = 'recente';
   detalheAbertoId: string | null = null;
   public investimentoEditando: { [key: string]: Investimento } = {};
+  data_atual: Date = new Date();
 
-  icons = { ChevronDown, ChevronUp };
+  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
 
@@ -218,7 +220,9 @@ export class InvestimentosComponent implements OnInit {
       this.investimentos = (data || []).map((item: any) => {
         const dataCompra = new Date(item.data_compra);
         const dataVenda = new Date(dataCompra);
+        const dataVendaDate: Date = new Date(dataCompra);
         dataVenda.setDate(dataCompra.getDate() + 15); // Adiciona 15 dias à data de compra
+        dataVendaDate.setDate(dataCompra.getDate() + 15); // Adiciona 15 dias à data de compra
 
         const valorMinimoVenda = Math.round(item.valor_compra / 0.9); // Remove as casas decimais do valor mínimo de venda
 
@@ -230,7 +234,7 @@ export class InvestimentosComponent implements OnInit {
         if (item.valor_vendido > 0) {
           totalRetorno += (item.valor_vendido * 0.9) - item.valor_compra; // Subtraindo 10% do valor vendido
         }
-
+        
         return {
           id: item.id,
           id_item: item.id_item,
@@ -241,6 +245,7 @@ export class InvestimentosComponent implements OnInit {
           data_compra: this.formatDateForInput(item.data_compra),
           foto_url: item.itens.url_foto,
           data_venda: dataVenda.toISOString(), // Inclui hora e minuto na data
+          data_vendaDate: dataVendaDate, // Nova variável para a data de venda
           valor_minimo_venda: valorMinimoVenda, // Adiciona o valor mínimo de venda
         };
       });
