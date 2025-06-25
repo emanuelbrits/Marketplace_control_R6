@@ -35,13 +35,13 @@
     <!-- Filtro: Aguardando / Vendidos -->
     <div class="flex space-x-4 mb-4">
         <button (click)="setFiltro('aguardando')"
-            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'aguardando', 'bg-gray-500 text-gray-200': statusFiltro !== 'aguardando' }"
-            class="px-4 py-2 rounded-lg">
+            [ngClass]="{ 'bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white': statusFiltro === 'aguardando', 'bg-gray-500 text-gray-200': statusFiltro !== 'aguardando' }"
+            class="w-[10.5rem] px-4 py-2 rounded-lg">
             Aguardando venda
         </button>
         <button (click)="setFiltro('vendidos')"
-            [ngClass]="{ 'bg-blue-500 text-white': statusFiltro === 'vendidos', 'bg-gray-500 text-gray-200': statusFiltro !== 'vendidos' }"
-            class="px-4 py-2 rounded-lg">
+            [ngClass]="{ 'bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white': statusFiltro === 'vendidos', 'bg-gray-500 text-gray-200 ': statusFiltro !== 'vendidos' }"
+            class="w-[10.5rem] px-4 py-2 ml-2 rounded-lg">
             Vendidos
         </button>
     </div>
@@ -49,19 +49,19 @@
     <!-- Ordenação: Mais recentes / Mais antigos -->
     <div class="flex space-x-4 mb-4">
         <button (click)="setOrdenacao('recente')"
-            [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'recente', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'recente' }"
-            class="px-4 py-2 rounded-lg">
+            [ngClass]="{ 'bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white': statusOrdenacao === 'recente', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'recente' }"
+            class="w-[10.5rem] px-4 py-2 rounded-lg">
             Mais recentes
         </button>
         <button (click)="setOrdenacao('antigo')"
-            [ngClass]="{ 'bg-green-500 text-white': statusOrdenacao === 'antigo', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'antigo' }"
-            class="px-4 py-2 rounded-lg">
+            [ngClass]="{ 'bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white': statusOrdenacao === 'antigo', 'bg-gray-500 text-gray-200': statusOrdenacao !== 'antigo' }"
+            class="w-[10.5rem] px-4 py-2 ml-2 rounded-lg">
             Mais antigos
         </button>
     </div>
 
     <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applySearch()" placeholder="Buscar por nome"
-        class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded mb-4" />
+        class="input input-bordered border w-[22rem] bg-white text-black border-gray-400 p-2 rounded-lg mb-4" />
 
 
     <!-- Indicador de carregamento -->
