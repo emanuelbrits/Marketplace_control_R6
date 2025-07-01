@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { supabase } from '../../../supabase-client';
 import { HttpClient } from '@angular/common/http';
@@ -11,8 +11,9 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, FormsModule]
 })
 export class NavbarComponent {
+  isScrolled = false;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient) { }
 
   async logout() {
     const { error } = await supabase.auth.signOut();
@@ -21,5 +22,10 @@ export class NavbarComponent {
     } else {
       console.error('Erro ao sair:', error.message);
     }
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.isScrolled = window.scrollY > 50; // ajuste o valor conforme desejar
   }
 }

@@ -1,13 +1,16 @@
-<div class="h-16 bg-gradient-to-r from-black to-orange-900 shadow-md font-sans">
-  <div class="flex h-full items-center justify-between max-w-7xl mx-auto px-2">
+<div [ngClass]="{
+      'h-16 top-0 w-full rounded-none from-black to-orange-900': !isScrolled,
+      'h-[4rem] top-4 w-[90%] md:w-[70%] rounded-full from-[rgba(0,0,0,0.7)] to-[#7c2d12] border-[0.5px] border-zinc-600': isScrolled
+    }"
+    class="fixed bg-gradient-to-r shadow-md font-sans transition-all duration-500 z-50 mx-auto left-0 right-0">
+  
+  <div class="flex h-full justify-between items-center max-w-7xl mx-auto px-8 transition-all duration-500">
     <!-- Logo ou Título -->
     <div class="flex items-center space-x-4 h-full">
       <a href="/" class="relative group text-white text-lg h-full flex items-center px-2 pb-1
-          before:absolute before:inset-0 before:w-1/2 before:bg-gradient-to-r
-          before:from-orange-600 before:to-orange-900 before:z-[-1]
-          hover:border-b-4 hover:border-orange-600 transition-all duration-100 font-bold">HOME
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+          hover:border-b-4 hover:border-orange-600 transition-all duration-100 font-bold">
+        HOME
+        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
         </div>
       </a>
     </div>
@@ -15,15 +18,11 @@
     <!-- Botões de navegação -->
     <div class="flex items-center space-x-4 h-full">
       <a href="/investimentos" class="relative group text-white text-lg h-full flex items-center px-2 pb-1
-          before:absolute before:inset-0 before:w-1/2 before:bg-gradient-to-r
-          before:from-orange-600 before:to-orange-900 before:z-[-1]
           hover:border-b-4 hover:border-orange-600 transition-all duration-100 font-bold">
         INVESTIMENTOS
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
         </div>
       </a>
-
 
       <!-- Botão de Logout -->
       <button (click)="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition text-lg">

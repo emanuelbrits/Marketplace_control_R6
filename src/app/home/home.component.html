@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="p-4 bg-gradient-to-t from-black to-gray-900">
+<div class="p-4 bg-gradient-to-t from-black to-gray-900 mt-[4rem]">
 
     <div class="py-4 flex flex-col justify-start">
         <div class="flex flex-row">
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="flex flex-row gap-2 md:gap-6">
+    <div class="flex flex-row gap-2">
         <div class="mb-4 flex flex-col">
             <button (click)="mostrarFiltros = !mostrarFiltros"
                 class="mb-4 bg-gradient-to-r from-orange-500 to-orange-700 text-white px-4 py-2 rounded shadow-md h-12 w-14">
@@ -35,7 +35,7 @@
         </div>
 
         <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applySearch()" placeholder="Buscar por nome"
-            class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded" />
+            class="input input-bordered w-[16.8rem] border bg-white text-black border-gray-400 p-2 rounded" />
     </div>
 
     <div *ngIf="mostrarFiltros" class="bg-black p-4 rounded text-white">
