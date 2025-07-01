@@ -326,7 +326,13 @@ export class InvestimentosComponent implements OnInit {
     }
   }
 
-  openMarketplace(id: string) {
-    window.open(`https://www.ubisoft.com/en-us/game/rainbow-six/siege/marketplace?route=sell%2Fitem-details&itemId=${id}`)
+  openMarketplace(investimento: Investimento) {
+    if (investimento.valor_vendido > 0) {
+      window.open(`https://www.ubisoft.com/en-us/game/rainbow-six/siege/marketplace?route=buy%2Fitem-details&itemId=${investimento.id_item}`, '_blank');
+    }
+
+    if (investimento.valor_vendido === 0) {
+      window.open(`https://www.ubisoft.com/en-us/game/rainbow-six/siege/marketplace?route=sell%2Fitem-details&itemId=${investimento.id_item}`, '_blank');
+    }
   }
 }
