@@ -329,10 +329,11 @@ export class HomeComponent implements OnInit {
   // Função para abrir o modal e passar os dados do item
   abrirModal(item: any) {
     this.modalItem = {
-      id: item.id, // Pega o ID do item selecionado
+      id: item.id,
       nome: item.nome,
-      campo1: '', // Reseta o valor pago
-      campo2: '', // Reseta a data de compra
+      url_foto: item.url_foto,
+      campo1: '',
+      campo2: '',
     };
     this.modalAberto = true;
   }
