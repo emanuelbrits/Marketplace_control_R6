@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
   filtroOperador: string = '';
 
   // Opções para os selects
-  opcoesTipo: string[] = ['ARMA', 'AMULETO', 'ESTAMPA PARA ADICIONAL', 'HEADGEAR', 'UNIFORM', 'RETRATO DE AGENTE'];
+  opcoesTipo: string[] = ['ARMA', 'AMULETO', 'ESTAMPA PARA ADICIONAL', 'HEADGEAR', 'UNIFORM', 'RETRATO DE AGENTE', 'CARD BACKGROUND'];
   opcoesArmas: string[] = [];
   opcoesOperadores: string[] = [];
 

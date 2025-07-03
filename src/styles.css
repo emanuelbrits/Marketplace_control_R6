@@ -2,3 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import "tailwindcss-animated";
+
+body {
+  font-family: 'Inter', sans-serif;
+}

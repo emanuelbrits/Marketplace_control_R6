@@ -53,7 +53,7 @@ export class InvestimentosComponent implements OnInit {
   investimentos: Investimento[] = [];
   investimentosFiltradosBusca: any[] = []; // O que será exibido no *ngFor
   searchQuery: string = '';
-  valoresMedios: { [id: string]: string } = {};
+  valoresMedios: { [id: string]: number } = {};
   loading = false;
   error: string | null = null;
   isModalOpen = false;  // Controla a exibição do modal
@@ -70,6 +70,16 @@ export class InvestimentosComponent implements OnInit {
   icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
+
+  willProfit(investimento: Investimento): boolean {
+    if ((investimento.valor_minimo_venda - this.valoresMedios[investimento.id_item]) > 0) return true;
+    else return false;
+  }
+
+  profited(investimento: Investimento): boolean {
+    if (investimento.valor_vendido - (investimento.valor_vendido * 0.1) - investimento.valor_compra > 0) return true;
+    else return false;
+  }
 
   possuiItem(id: string): boolean {
     return this.investimentos.some(investimento =>
@@ -119,7 +129,7 @@ export class InvestimentosComponent implements OnInit {
       this.http.get<{ valorMedio: string }>(`https://valormedio-m7s4cidcaa-uc.a.run.app/valorMedio?itemId=${item.id_item}`)
         .subscribe({
           next: (res) => {
-            this.valoresMedios[item.id_item] = res.valorMedio;
+            this.valoresMedios[item.id_item] = Number(res.valorMedio);
             this.retornoEstimado += Math.trunc(Number((Number(res.valorMedio) - (Number(res.valorMedio) * 0.1)) - item.valor_compra))
           },
           error: (err) => {

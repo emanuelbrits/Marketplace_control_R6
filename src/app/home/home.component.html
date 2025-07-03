@@ -1,8 +1,8 @@
 <app-navbar></app-navbar>
 
-<div class="p-4 bg-gradient-to-t from-black to-gray-900 mt-[4rem]">
+<div class="p-4 bg-gradient-to-t from-black to-gray-900">
 
-    <div class="py-4 flex flex-col justify-start">
+    <div class="py-4 flex flex-col justify-start mt-[4rem]">
         <div class="flex flex-row">
             <input type="text" [(ngModel)]="itemIdInput" placeholder="Digite o ID do item"
                 class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded" />
@@ -100,7 +100,7 @@
             <!-- Informações do Item -->
             <div class="p-4">
                 <!-- Nome do Item -->
-                <h3 class="mt-2 text-white font-semibold text-2xl font-sans">{{ item.nome }}</h3>
+                <h3 class="mt-2 text-white font-semibold text-2xl">{{ item.nome }}</h3>
 
                 <!-- Tipo do Item -->
                 <p class="mt-1 text-gray-300 text-lg">
