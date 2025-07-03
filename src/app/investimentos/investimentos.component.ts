@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../shared/navbar/navbar.component";
-import { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, LucideAngularModule } from 'lucide-angular';
+import { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, LucideAngularModule, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-angular';
 import {
   trigger,
   state,
@@ -67,7 +67,7 @@ export class InvestimentosComponent implements OnInit {
   public investimentoEditando: { [key: string]: Investimento } = {};
   data_atual: Date = new Date();
 
-  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X };
+  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp , BanknoteArrowDown  };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
 

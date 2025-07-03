@@ -35,21 +35,27 @@
     <!-- Filtro: Aguardando / Vendidos -->
     <div class="flex flex-wrap gap-4 mt-[4rem] mb-4 justify-start items-center">
         <!-- Filtro: Aguardando / Vendidos -->
-        <div class="flex bg-gray-600 bg-opacity-50 rounded-full w-[22rem]">
-            <button (click)="setFiltro('aguardando')" [ngClass]="{
-        'bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white': statusFiltro === 'aguardando',
-        'text-gray-200': statusFiltro !== 'aguardando'
-      }" class="w-1/2 p-2 rounded-full transition-all duration-300 md:text-base">
+        <div class="relative flex bg-gray-600 bg-opacity-50 rounded-full w-[24rem] p-1">
+            <!-- Bolha animada -->
+            <div class="absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] bg-gradient-to-r from-orange-500 to-orange-700 rounded-full transition-transform duration-300 ease-in-out"
+                [ngStyle]="{ transform: statusFiltro === 'vendidos' ? 'translateX(100%)' : 'translateX(0)' }">
+            </div>
+
+            <!-- Botão 1 -->
+            <button (click)="setFiltro('aguardando')"
+                class="w-1/2 z-10 p-2 rounded-full transition-all duration-300 md:text-base"
+                [ngClass]="{ 'text-white': statusFiltro === 'aguardando', 'text-gray-200': statusFiltro !== 'aguardando' }">
                 Aguardando venda
             </button>
 
-            <button (click)="setFiltro('vendidos')" [ngClass]="{
-        'bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white': statusFiltro === 'vendidos',
-        'text-gray-200': statusFiltro !== 'vendidos'
-      }" class="w-1/2 px-4 py-2 rounded-full transition-all duration-300">
+            <!-- Botão 2 -->
+            <button (click)="setFiltro('vendidos')"
+                class="w-1/2 z-10 px-4 py-2 rounded-full transition-all duration-300"
+                [ngClass]="{ 'text-white': statusFiltro === 'vendidos', 'text-gray-200': statusFiltro !== 'vendidos' }">
                 Vendidos
             </button>
         </div>
+
 
         <!-- Ordenação: Select customizado -->
         <div class="relative flex items-center rounded-full w-fit">
@@ -91,7 +97,7 @@
         <!-- Card container -->
         <div *ngFor="let investimento of investimentosFiltrados" #cardRef [attr.id]="'card-' + investimento.id_item"
             [ngClass]="{
-            'md:col-span-2 md:row-span-2 lg:col-span-3 lg:row-span-3 xl:col-span-4 xl:row-span-4 lg:h-[46rem] xl:h-[50rem]': isDetalheVisivel(investimento.id_item)
+            'md:col-span-2 md:row-span-2 lg:col-span-3 lg:row-span-3 xl:col-span-4 xl:row-span-3 lg:h-[46rem] xl:h-[50rem]': isDetalheVisivel(investimento.id_item)
         }" class="bg-gray-900 h-full shadow rounded group relative pb-6 transition-all duration-300 ease-in-out">
 
             <!-- CONTEÚDO PADRÃO - só aparece quando o card está fechado -->
@@ -103,16 +109,20 @@
 
                 <!-- Valores -->
                 <div class="flex flex-row items-center justify-center gap-6">
-                    <div
-                        class="flex fles-row justify-center text-s w-[5.5rem] px-3 py-1 rounded-full shadow bg-black text-white">
-                        <span class="inline-flex items-center">
-                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                                class="w-5 h-5 mr-2" />
-                            {{ investimento.valor_compra | number }}
-                        </span>
+                    <div class="flex flex-row items-center gap-2">
+                        <lucide-icon class="text-2xl text-white" name="banknote-arrow-up"></lucide-icon>
+                        <div
+                            class="flex fles-row justify-center text-s w-[5.5rem] px-3 py-1 rounded-full shadow bg-black text-white">
+                            <span class="inline-flex items-center">
+                                <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                    class="w-5 h-5 mr-2" />
+                                {{ investimento.valor_compra | number }}
+                            </span>
+                        </div>
                     </div>
 
-                    <div *ngIf="valoresMedios[investimento.id_item]" class="flex flex-row gap-2">
+                    <div *ngIf="valoresMedios[investimento.id_item]" class="flex flex-row items-center gap-2">
+                        <span class="material-icons text-2xl text-white">sell</span>
                         <div *ngIf="investimento.valor_vendido <= 0"
                             class="flex fles-row justify-center w-[5.5rem] px-3 py-1 rounded-full shadow text-white"
                             [ngClass]="{
@@ -129,7 +139,8 @@
                             24h</span>
                     </div>
 
-                    <div *ngIf="investimento.valor_vendido > 0" class="flex flex-row gap-2">
+                    <div *ngIf="investimento.valor_vendido > 0" class="flex flex-row items-center gap-2">
+                        <span class="material-icons text-2xl text-white">sell</span>
                         <div class="flex flex-row justify-center w-[5.5rem] px-3 py-1 rounded-full shadow text-white"
                             [ngClass]="{
                             'bg-orange-600': !profited(investimento),

@@ -5,7 +5,7 @@ import { AppComponent } from './app/app.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { importProvidersFrom } from '@angular/core';
-import { ChevronDown, ChevronUp,AlarmClockCheck, LucideAngularModule, AlarmClockMinus, Check, X } from 'lucide-angular';
+import { ChevronDown, ChevronUp,AlarmClockCheck, LucideAngularModule, AlarmClockMinus, Check, X, BanknoteArrowUp, BanknoteArrowDown } from 'lucide-angular';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -13,7 +13,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(),
     provideAnimations(),
     importProvidersFrom(
-      LucideAngularModule.pick({ ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X })
+      LucideAngularModule.pick({ ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp, BanknoteArrowDown })
     )
   ],
 }).catch(err => console.error(err));
