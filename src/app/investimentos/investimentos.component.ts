@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit } from '@angular/core';
 import { supabase } from '../../supabase-client'; // Ajuste conforme o seu projeto
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -35,6 +35,7 @@ interface Investimento {
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
   imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('detalheAnimacao', [
       transition(':enter', [
@@ -66,8 +67,10 @@ export class InvestimentosComponent implements OnInit {
   detalheAbertoId: string | null = null;
   public investimentoEditando: { [key: string]: Investimento } = {};
   data_atual: Date = new Date();
+  currentPage = 1;
+  itemsPerPage = 20;
 
-  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp , BanknoteArrowDown  };
+  icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp, BanknoteArrowDown };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
 
@@ -85,6 +88,22 @@ export class InvestimentosComponent implements OnInit {
     return this.investimentos.some(investimento =>
       investimento.id_item === id && investimento.valor_vendido === 0
     );
+  }
+
+  get paginatedInvestimentos() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.investimentosFiltrados.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages() {
+    return Math.ceil(this.investimentosFiltrados.length / this.itemsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Opcional: rolar para o topo
+    }
   }
 
   toggleDetalhes(id: string) {
@@ -116,7 +135,12 @@ export class InvestimentosComponent implements OnInit {
   setFiltro(filtro: 'aguardando' | 'vendidos') {
     this.detalheAbertoId = null;
     this.statusFiltro = filtro;
+    this.atualizarLista();
+  }
 
+  atualizarLista() {
+    this.investimentosFiltradosBusca = this.getFilteredItems();
+    this.currentPage = 1; // Sempre volta para a primeira página ao buscar ou trocar o filtro
   }
 
   setOrdenacao(ordem: 'recente' | 'antigo') {
@@ -153,17 +177,42 @@ export class InvestimentosComponent implements OnInit {
     });
   }
 
-  applySearch() {
-    const query = this.searchQuery.trim().toLowerCase();
+  getFilteredItems() {
+    // Filtra por status
+    let itensFiltrados = this.investimentos.filter(investimento => {
+      if (this.statusFiltro === 'aguardando') {
+        return investimento.valor_vendido <= 0;
+      } else if (this.statusFiltro === 'vendidos') {
+        return investimento.valor_vendido > 0;
+      }
+      return true;
+    });
 
-    if (!query) {
-      this.investimentosFiltradosBusca = [...this.investimentos];
-      return;
+    // Aplica busca (se houver texto)
+    if (this.searchQuery && this.searchQuery.trim() !== '') {
+      itensFiltrados = itensFiltrados.filter(investimento =>
+        investimento.nome.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
     }
 
-    this.investimentosFiltradosBusca = this.investimentos.filter(investimento =>
-      investimento.nome.toLowerCase().includes(query)
+    return itensFiltrados;
+  }
+
+  applySearch() {
+    const listaBase = this.investimentos.filter(investimento => {
+      if (this.statusFiltro === 'aguardando') {
+        return investimento.valor_vendido <= 0;
+      } else if (this.statusFiltro === 'vendidos') {
+        return investimento.valor_vendido > 0;
+      }
+      return true;
+    });
+
+    this.investimentosFiltradosBusca = listaBase.filter(investimento =>
+      investimento.nome.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
+
+    this.currentPage = 1; // Resetar página ao alterar busca
   }
 
   async ngOnInit() {

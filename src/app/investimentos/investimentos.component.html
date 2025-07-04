@@ -1,35 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="p-4 bg-gray-950">
-
-    <!-- <div class="mb-4 p-4 bg-black rounded-lg shadow">
-        <div class="flex justify-around">
-            <div class="flex flex-col mr-4">
-                <span class="font-semibold text-white">Valor no inventario:</span>
-                <div class="bg-white inline-flex items-center w-20 rounded">
-                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                        alt="" class="w-5 h-5 mr-2 align-middle ml-2">
-                    <span class="text-black font-bold">{{quantidadeInvestida}}</span>
-                </div>
-            </div>
-            <div class="flex flex-col mr-4">
-                <span class="font-semibold text-white">Retorno estimado:</span>
-                <div class="bg-white inline-flex items-center w-20 rounded">
-                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                        alt="" class="w-5 h-5 mr-2 align-middle ml-2">
-                    <span class="text-black font-bold">{{retornoEstimado}}</span>
-                </div>
-            </div>
-            <div class="flex flex-col mr-4 ml-4">
-                <span class="font-semibold text-white">Retorno Obtido:</span>
-                <div class="bg-green-500 inline-flex items-center w-20 rounded">
-                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                        alt="" class="w-5 h-5 mr-2 align-middle ml-2">
-                    <span class="text-black font-bold">{{retornoObtido}}</span>
-                </div>
-            </div>
-        </div>
-    </div> -->
+<div class="p-4 bg-gray-950 min-h-screen">
 
     <!-- Botões de filtro -->
     <!-- Filtro: Aguardando / Vendidos -->
@@ -84,7 +55,8 @@
     </div>
 
     <!-- Indicador de carregamento -->
-    <div *ngIf="loading" class="text-white">Carregando investimentos...</div>
+    <div *ngIf="loading" class="flex justify-center items-center text-white min-h-screen"><span
+            class="loading loading-spinner loading-xl"></span></div>
 
     <!-- Mensagem de erro -->
     <div *ngIf="error" class="text-red-500">
@@ -95,7 +67,7 @@
     <div *ngIf="!loading && investimentos.length > 0"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <!-- Card container -->
-        <div *ngFor="let investimento of investimentosFiltrados" #cardRef [attr.id]="'card-' + investimento.id_item"
+        <div *ngFor="let investimento of paginatedInvestimentos" #cardRef [attr.id]="'card-' + investimento.id_item"
             [ngClass]="{
             'md:col-span-2 md:row-span-2 lg:col-span-3 lg:row-span-3 xl:col-span-4 xl:row-span-3 lg:h-[46rem] xl:h-[50rem]': isDetalheVisivel(investimento.id_item)
         }" class="bg-gray-900 h-full shadow rounded group relative pb-6 transition-all duration-300 ease-in-out">
@@ -121,22 +93,37 @@
                         </div>
                     </div>
 
-                    <div *ngIf="valoresMedios[investimento.id_item]" class="flex flex-row items-center gap-2">
-                        <span class="material-icons text-2xl text-white">sell</span>
-                        <div *ngIf="investimento.valor_vendido <= 0"
-                            class="flex fles-row justify-center w-[5.5rem] px-3 py-1 rounded-full shadow text-white"
-                            [ngClass]="{
-                            'bg-orange-600': willProfit(investimento),
-                            'bg-green-600': !willProfit(investimento)
-                        }">
-                            <span class="inline-flex items-center">
-                                <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
-                                    class="w-5 h-5 mr-2" />
-                                {{ valoresMedios[investimento.id_item] }}
-                            </span>
+                    <div *ngIf="investimento.valor_vendido <= 0" class="flex flex-row items-center gap-2">
+                        <div *ngIf="valoresMedios[investimento.id_item]" class="flex flex-row justify-center gap-2">
+                            <span class="material-icons text-2xl text-white">sell</span>
+                            <div class="flex flex-row justify-center w-[5.5rem] px-3 py-1 rounded-full shadow text-white"
+                                [ngClass]="{
+                                    'bg-orange-600': willProfit(investimento),
+                                    'bg-green-600': !willProfit(investimento)
+                                }">
+                                <span class="inline-flex items-center">
+                                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                        class="w-5 h-5 mr-2" />
+                                    {{ valoresMedios[investimento.id_item] }}
+                                </span>
+                            </div>
+                            <span class="text-white font-poppins text-md self-center items-center justify-center">/
+                                24h</span>
                         </div>
-                        <span class="text-white font-poppins text-md self-center items-center justify-center">/
-                            24h</span>
+
+                        <div *ngIf="!valoresMedios[investimento.id_item]" class="flex flex-row items-center gap-2">
+                            <span class="material-icons text-2xl text-white">sell</span>
+                            <div *ngIf="investimento.valor_vendido <= 0"
+                                class="flex flex-row justify-center w-[5.5rem] px-3 py-1 bg-black rounded-full shadow text-white">
+                                <span class="inline-flex items-center">
+                                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                        class="w-5 h-5 mr-2" />
+                                    <span class="loading loading-dots loading-md"></span>
+                                </span>
+                            </div>
+                            <span class="text-white font-poppins text-md self-center items-center justify-center">/
+                                24h</span>
+                        </div>
                     </div>
 
                     <div *ngIf="investimento.valor_vendido > 0" class="flex flex-row items-center gap-2">
@@ -314,8 +301,30 @@
         </div>
     </div>
 
+    <!-- Paginação -->
+    <div *ngIf="totalPages > 1" class="flex justify-center items-center mt-8 gap-2">
+        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+            class="px-4 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+            Anterior
+        </button>
+
+        <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
+            <button (click)="changePage(i + 1)"
+                [ngClass]="{ 'bg-orange-600 text-white': currentPage === (i + 1), 'bg-gray-700 text-white': currentPage !== (i + 1) }"
+                class="px-4 py-2 rounded">
+                {{ i + 1 }}
+            </button>
+        </ng-container>
+
+        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+            class="px-4 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+            Próxima
+        </button>
+    </div>
+
     <!-- Mensagem se não houver investimentos -->
-    <div *ngIf="!loading && investimentosFiltrados.length === 0" class="text-gray-500">
+    <div *ngIf="!loading && investimentosFiltrados.length === 0"
+        class="text-gray-500 min-h-screen flex items-center justify-center">
         Nenhum investimento encontrado.
     </div>
 </div>
