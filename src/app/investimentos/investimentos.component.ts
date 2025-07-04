@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { supabase } from '../../supabase-client'; // Ajuste conforme o seu projeto
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -8,13 +8,11 @@ import { NavbarComponent } from "../shared/navbar/navbar.component";
 import { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, LucideAngularModule, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-angular';
 import {
   trigger,
-  state,
   style,
   animate,
   transition,
 } from '@angular/animations';
 import { ViewChildren, ElementRef, QueryList } from '@angular/core';
-import { NgZone } from '@angular/core';
 
 interface Investimento {
   id: number;
@@ -35,7 +33,6 @@ interface Investimento {
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
   imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('detalheAnimacao', [
       transition(':enter', [
@@ -49,7 +46,7 @@ interface Investimento {
   ]
 })
 export class InvestimentosComponent implements OnInit {
-  constructor(private router: Router, private http: HttpClient, private ngZone: NgZone) { }
+  constructor(private router: Router, private http: HttpClient) { }
 
   investimentos: Investimento[] = [];
   investimentosFiltradosBusca: any[] = []; // O que será exibido no *ngFor
@@ -104,6 +101,10 @@ export class InvestimentosComponent implements OnInit {
       this.currentPage = page;
       window.scrollTo({ top: 0, behavior: 'smooth' }); // Opcional: rolar para o topo
     }
+  }
+
+  scrollToBottom() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
   toggleDetalhes(id: string) {
@@ -322,6 +323,7 @@ export class InvestimentosComponent implements OnInit {
       this.error = `Erro ao carregar os investimentos: ${err.message}`;
     } finally {
       this.loading = false;
+      window.scrollTo({ top: 0, behavior: 'auto' });
     }
   }
 
