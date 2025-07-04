@@ -340,9 +340,12 @@
         </button>
     </div>
 
-    <button (click)="scrollToBottom()"
+    <button (click)="scrollToPosition()"
         class="fixed bottom-4 right-4 bg-orange-500 hover:bg-orange-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow animate-bounce">
-        <span class="material-icons">arrow_downward</span>
+
+        <span class="material-icons transition-transform duration-300" [ngClass]="{ 'animate-spin': isAnimating }">
+            {{ showArrowDown ? 'arrow_downward' : 'arrow_upward' }}
+        </span>
     </button>
 
     <!-- Mensagem se não houver investimentos -->

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { supabase } from '../../supabase-client'; // Ajuste conforme o seu projeto
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -66,10 +66,50 @@ export class InvestimentosComponent implements OnInit {
   data_atual: Date = new Date();
   currentPage = 1;
   itemsPerPage = 20;
+  isAtBottom = false;
+  showArrowDown = true;
+  isAnimating = false;
 
   icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp, BanknoteArrowDown };
 
   @ViewChildren('cardRef') cardElements!: QueryList<ElementRef>;
+
+  async ngOnInit() {
+    await this.carregarInvestimentos();
+    this.investimentosFiltradosBusca = [...this.investimentos];
+    this.carregarValoresMedios();
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const pageHeight = document.body.offsetHeight;
+
+    const atBottom = scrollPosition >= pageHeight - 20;
+
+    if (atBottom !== this.isAtBottom) {
+      this.triggerIconAnimation(atBottom);
+    }
+  }
+
+  triggerIconAnimation(atBottom: boolean) {
+    this.isAnimating = true;
+
+    // Aguarda o início da animação antes de trocar o ícone
+    setTimeout(() => {
+      this.showArrowDown = !atBottom; // Troca o ícone só depois de iniciar a animação
+      this.isAnimating = false;
+      this.isAtBottom = atBottom;
+    }, 300); // Tempo da animação
+  }
+
+  scrollToPosition() {
+    if (this.isAtBottom) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+  }
 
   willProfit(investimento: Investimento): boolean {
     if ((investimento.valor_minimo_venda - this.valoresMedios[investimento.id_item]) > 0) return true;
@@ -214,12 +254,6 @@ export class InvestimentosComponent implements OnInit {
     );
 
     this.currentPage = 1; // Resetar página ao alterar busca
-  }
-
-  async ngOnInit() {
-    await this.carregarInvestimentos();
-    this.investimentosFiltradosBusca = [...this.investimentos];
-    this.carregarValoresMedios();
   }
 
   async logout() {
