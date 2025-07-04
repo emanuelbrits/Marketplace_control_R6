@@ -3,11 +3,11 @@
 <div class="p-4 bg-gradient-to-t from-black to-gray-900">
 
     <div class="py-4 flex flex-col justify-start mt-[4rem]">
-        <div class="flex flex-row">
+        <div class="flex flex-row gap-2">
             <input type="text" [(ngModel)]="itemIdInput" placeholder="Digite o ID do item"
-                class="input input-bordered border bg-white text-black border-gray-400 p-2 rounded" />
+                class="input input-bordered border w-[12rem] bg-white text-black border-gray-400 p-2 rounded" />
             <button (click)="adicionarItem(itemIdInput)"
-                class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white px-4 py-2 ml-2 rounded"
+                class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white w-[9rem] px-4 py-2 rounded"
                 [disabled]="isLoading">
                 {{ isLoading ? 'Adicionando Item...' : 'Adicionar Item' }}
             </button>
@@ -25,7 +25,7 @@
     <div class="flex flex-row gap-2">
         <div class="mb-4 flex flex-col">
             <button (click)="mostrarFiltros = !mostrarFiltros"
-                class="mb-4 bg-gradient-to-r from-orange-500 to-orange-700 text-white px-4 py-2 rounded shadow-md h-12 w-14">
+                class="flex justify-center items-center mb-4 bg-gradient-to-r from-orange-500 to-orange-700 w-[3rem] text-white rounded shadow-md h-12">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -35,7 +35,7 @@
         </div>
 
         <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applySearch()" placeholder="Buscar por nome"
-            class="input input-bordered w-[16.8rem] border bg-white text-black border-gray-400 p-2 rounded" />
+            class="input input-bordered w-[18rem] border bg-white text-black border-gray-400 p-2 rounded" />
     </div>
 
     <div *ngIf="mostrarFiltros" class="bg-black p-4 rounded text-white">
@@ -145,13 +145,13 @@
         <img [src]="modalItem.url_foto" alt="Imagem do Item" class="object-contain w-full min-h-[16.5rem] rounded bg-black"
             *ngIf="modalItem.url_foto" />
         <!-- Usar o nome do item no título -->
-        <h2 class="text-2xl font-bold mt-4 mb-4 text-black">{{ modalItem.nome }}</h2>
+        <h2 class="text-center text-2xl font-bold mt-4 mb-4 text-black">{{ modalItem.nome }}</h2>
 
         <div class="flex flex-row justify-between w-full">
             <!-- Campos do Modal -->
             <div class="mb-4">
                 <input type="number" id="campo1" [(ngModel)]="modalItem.campo1"
-                    class="mt-1 p-2 w-[9.375rem] h-[2.63rem] border border-gray-300 rounded bg-white text-black placeholder-black" placeholder="Valor de compra"/>
+                    class="mt-1 p-2 w-[9.375rem] h-[2.63rem] border border-gray-300 rounded bg-white text-sm text-black placeholder-black" placeholder="Valor de compra"/>
             </div>
 
             <div class="mb-4">
