@@ -302,23 +302,39 @@
     </div>
 
     <!-- Paginação -->
-    <div *ngIf="totalPages > 1" class="flex justify-center items-center mt-8 gap-2">
+    <div *ngIf="totalPages > 1" class="flex justify-center items-center max-w-screen mt-8 gap-2 overflow-hidden">
+        <button (click)="changePage(1)" [disabled]="currentPage === 1"
+            class="flex items-center justify-center px-2 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+            <span class="material-icons">first_page</span>
+        </button>
         <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
-            class="px-4 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
-            Anterior
+            class="flex items-center justify-center px-2 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+            <span class="material-icons">arrow_back</span>
         </button>
 
-        <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
-            <button (click)="changePage(i + 1)"
-                [ngClass]="{ 'bg-orange-600 text-white': currentPage === (i + 1), 'bg-gray-700 text-white': currentPage !== (i + 1) }"
-                class="px-4 py-2 rounded">
-                {{ i + 1 }}
-            </button>
-        </ng-container>
+        <button *ngIf="currentPage > 1" (click)="changePage(currentPage - 1)"
+            class="px-4 py-2 rounded bg-gray-700 text-white">
+            {{ currentPage - 1 }}
+        </button>
+
+        <!-- Botão da página atual -->
+        <button class="px-4 py-2 rounded bg-orange-600 text-white">
+            {{ currentPage }}
+        </button>
+
+        <!-- Botão da próxima página -->
+        <button *ngIf="currentPage < totalPages" (click)="changePage(currentPage + 1)"
+            class="px-4 py-2 rounded bg-gray-700 text-white">
+            {{ currentPage + 1 }}
+        </button>
 
         <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
-            class="px-4 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
-            Próxima
+            class="flex items-center justify-center px-2 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+            <span class="material-icons">arrow_forward</span>
+        </button>
+        <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages"
+            class="flex items-center justify-center px-2 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+            <span class="material-icons">last_page</span>
         </button>
     </div>
 
