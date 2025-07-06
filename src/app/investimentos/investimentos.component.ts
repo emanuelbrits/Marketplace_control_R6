@@ -147,20 +147,20 @@ export class InvestimentosComponent implements OnInit {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }
 
-  toggleDetalhes(id: string) {
-    const investimentoOriginal = this.investimentosFiltrados.find(item => item.id_item === id);
-    this.investimentoEditando[id] = { ...investimentoOriginal };
+  toggleDetalhes(id_investimento: string, id_item: string) {
+    const investimentoOriginal = this.investimentosFiltrados.find(item => item.id_item === id_item);
+    this.investimentoEditando[id_item] = { ...investimentoOriginal };
 
     // Se o mesmo já estiver aberto, fecha
-    if (this.detalheAbertoId === id) {
+    if (this.detalheAbertoId === id_investimento) {
       this.detalheAbertoId = null;
 
     } else {
-      this.detalheAbertoId = id;
+      this.detalheAbertoId = id_investimento;
       // Scroll até o card
       setTimeout(() => {
         const elements = this.cardElements?.toArray();
-        const cardElement = elements.find(el => el.nativeElement.id === `card-${id}`);
+        const cardElement = elements.find(el => el.nativeElement.id === `card-${id_investimento}`);
         cardElement?.nativeElement.scrollIntoView({
           behavior: 'smooth',
           block: 'center'
