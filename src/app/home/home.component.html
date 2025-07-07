@@ -85,32 +85,26 @@
     <!-- Mostrar os cards -->
     <div *ngIf="!loading && paginaItens.length > 0" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div *ngFor="let item of paginaItens"
-            class="bg-slate-800 shadow rounded text-center group relative cursor-pointer p-2"
-            (click)="abrirModal(item)">
-            <!-- Imagem -->
-            <div class="relative w-full h-64 overflow-hidden rounded">
-                <img [src]="item.url_foto" alt="Imagem do Item" class="object-contain w-full h-full rounded bg-black"
-                    *ngIf="item.url_foto" />
-                <!-- Degradê com efeito hover -->
-                <div
-                    class="absolute inset-0 bg-gradient-to-t from-orange-500 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300">
-                </div>
-            </div>
+            class="bg-zinc-900 shadow rounded text-center group relative cursor-pointer p-2" (click)="abrirModal(item)">
 
             <!-- Informações do Item -->
-            <div class="p-4">
+            <div class="flex flex-col justify-around p-4 text-white h-full">
                 <!-- Nome do Item -->
-                <h3 class="mt-2 text-white font-semibold text-2xl">{{ item.nome }}</h3>
+                <h3 class="mt-2 text-5xl font-anton">{{ item.nome }}</h3>
 
                 <!-- Tipo do Item -->
-                <p class="mt-1 text-gray-300 text-lg">
-                    <strong>Tipo:</strong> {{ item.tipo }}
+                <p class="mt-1 text-2xl">
+                    {{ item.tipo }}
                 </p>
 
+                <!-- Imagem -->
+                <div class="relative w-full h-64 overflow-hidden rounded">
+                    <img [src]="item.url_foto" alt="Imagem do Item" class="object-contain w-full h-full rounded"
+                        *ngIf="item.url_foto" />
+                </div>
+
                 <!-- Arma ou Operador -->
-                <p class="mt-1 text-gray-300 text-lg">
-                    <strong>{{ item.tipo === 'HEADGEAR' || item.tipo === 'UNIFORM' ? 'Operador' : 'Arma'
-                        }}:</strong>
+                <p class="mt-1 text-lg">
                     {{ item.tipo === 'HEADGEAR' || item.tipo === 'UNIFORM' ? item.arma_operador : item.arma_operador
                     }}
                 </p>

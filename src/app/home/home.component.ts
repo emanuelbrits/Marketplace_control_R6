@@ -312,21 +312,6 @@ export class HomeComponent implements OnInit {
     return item.tipo === this.filtroTipo;
   }
 
-  // Funções de navegação
-  paginaAnterior() {
-    if (this.page > 1) {
-      this.page--;
-      this.atualizarItensDaPagina();
-    }
-  }
-
-  proximaPagina() {
-    if (this.page * this.itensPorPagina < this.totalItens) {
-      this.page++;
-      this.atualizarItensDaPagina();
-    }
-  }
-
   // Função para abrir o modal e passar os dados do item
   abrirModal(item: any) {
     this.modalItem = {
