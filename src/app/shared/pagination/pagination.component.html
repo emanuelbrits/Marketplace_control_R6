@@ -1,0 +1,32 @@
+<div *ngIf="totalPages > 1" class="flex justify-center items-center max-w-screen mt-8 gap-2 overflow-hidden">
+
+  <button (click)="changePage(1)" [disabled]="currentPage === 1"
+    class="flex items-center justify-center px-2 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+    <span class="material-icons">first_page</span>
+  </button>
+
+  <button *ngIf="currentPage > 1" (click)="changePage(currentPage - 1)"
+    class="px-4 py-2 rounded bg-gray-700 text-white">
+    {{ currentPage - 1 }}
+  </button>
+
+  <button class="px-4 py-2 rounded bg-orange-600 text-white">
+    {{ currentPage }}
+  </button>
+
+  <button *ngIf="currentPage < totalPages" (click)="changePage(currentPage + 1)"
+    class="px-4 py-2 rounded bg-gray-700 text-white">
+    {{ currentPage + 1 }}
+  </button>
+
+  <button *ngIf="currentPage + 2 <= totalPages" disabled
+    class="px-4 py-2 rounded bg-gray-700 text-white">
+    ...
+  </button>
+
+  <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages"
+    class="flex items-center justify-center px-2 py-2 rounded bg-gray-700 text-white disabled:opacity-50">
+    <span class="material-icons">last_page</span>
+  </button>
+
+</div>

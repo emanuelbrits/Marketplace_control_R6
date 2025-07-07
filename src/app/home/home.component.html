@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<div class="p-4 bg-gradient-to-t from-black to-gray-900">
+<div class="p-4 bg-gray-950 min-h-screen">
 
     <div class="py-4 flex flex-col justify-start mt-[4rem]">
         <div class="flex flex-row gap-2">
@@ -123,27 +123,16 @@
         Nenhum item encontrado.
     </div>
 
-    <div class="flex justify-between items-center mt-4">
-        <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400" (click)="paginaAnterior()"
-            [disabled]="page === 1">
-            Página Anterior
-        </button>
-
-        <span class="text-white">Página {{ page }} de {{ Math.ceil(totalItens / itensPorPagina) }}</span>
-
-        <button class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400" (click)="proximaPagina()"
-            [disabled]="page * itensPorPagina >= totalItens">
-            Próxima Página
-        </button>
-    </div>
+    <app-pagination [items]="filteredItens" [itemsPerPage]="20" (pageChanged)="paginaItens = $event"></app-pagination>
 
 </div>
 
 <!-- Modal -->
-<div *ngIf="modalAberto" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50" (click)="fecharModal()">
+<div *ngIf="modalAberto" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+    (click)="fecharModal()">
     <div class="bg-gray-400 border-slate-600 border-2 p-8 rounded-lg shadow-lg w-96" (click)="$event.stopPropagation()">
-        <img [src]="modalItem.url_foto" alt="Imagem do Item" class="object-contain w-full min-h-[16.5rem] rounded bg-black"
-            *ngIf="modalItem.url_foto" />
+        <img [src]="modalItem.url_foto" alt="Imagem do Item"
+            class="object-contain w-full min-h-[16.5rem] rounded bg-black" *ngIf="modalItem.url_foto" />
         <!-- Usar o nome do item no título -->
         <h2 class="text-center text-2xl font-bold mt-4 mb-4 text-black">{{ modalItem.nome }}</h2>
 
@@ -151,7 +140,8 @@
             <!-- Campos do Modal -->
             <div class="mb-4">
                 <input type="number" id="campo1" [(ngModel)]="modalItem.campo1"
-                    class="mt-1 p-2 w-[9.375rem] h-[2.63rem] border border-gray-300 rounded bg-white text-sm text-black placeholder-black" placeholder="Valor de compra"/>
+                    class="mt-1 p-2 w-[9.375rem] h-[2.63rem] border border-gray-300 rounded bg-white text-sm text-black placeholder-black"
+                    placeholder="Valor de compra" />
             </div>
 
             <div class="mb-4">
@@ -162,7 +152,8 @@
 
         <!-- Botões -->
         <div class="flex justify-end mt-4">
-            <button (click)="fecharModal()" class="px-4 py-2 bg-transparent text-white rounded mr-2 text-lg">Cancelar</button>
+            <button (click)="fecharModal()"
+                class="px-4 py-2 bg-transparent text-white rounded mr-2 text-lg">Cancelar</button>
             <button (click)="salvarModal()" class="px-4 py-2 bg-black text-white rounded text-lg">Salvar</button>
         </div>
     </div>
