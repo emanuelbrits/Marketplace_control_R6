@@ -65,7 +65,7 @@ export class InvestimentosComponent implements OnInit {
   public investimentoEditando: { [key: string]: Investimento } = {};
   data_atual: Date = new Date();
   currentPage = 1;
-  itemsPerPage = 20;
+  itemsPerPage = 40;
   isAtBottom = false;
   showArrowDown = true;
   isAnimating = false;
