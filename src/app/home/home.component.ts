@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { supabase } from '../../supabase-client';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../shared/navbar/navbar.component";
 import { PaginationComponent } from "../shared/pagination/pagination.component";
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'home-root',
@@ -13,6 +14,17 @@ import { PaginationComponent } from "../shared/pagination/pagination.component";
   styleUrls: ['./home.component.css'],
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, NavbarComponent, PaginationComponent],
+  animations: [
+    trigger('fadeSlide', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(1rem)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(1rem)' }))
+      ])
+    ])
+  ]
 })
 export class HomeComponent implements OnInit {
   title = 'Lista de Itens em Cards';
@@ -50,7 +62,7 @@ export class HomeComponent implements OnInit {
     await this.carregarOpcoes(); // Carregar as opções para os filtros
   }
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient, private renderer: Renderer2) { }
 
   adicionarItem(itemId: string) {
     this.isLoading = true;
@@ -167,6 +179,30 @@ export class HomeComponent implements OnInit {
   filtroArmaSelecionada: string[] = [];
   filtroOperadorSelecionado: string[] = [];
 
+  abrirFiltros() {
+    this.mostrarFiltros = true;
+    this.renderer.addClass(document.body, 'overflow-hidden');
+  }
+
+  // Quando os filtros forem fechados
+  fecharFiltros() {
+    this.mostrarFiltros = false;
+    this.renderer.removeClass(document.body, 'overflow-hidden');
+  }
+
+  limparFiltros() {
+    this.filtroTipo = '';
+    this.filtroArmaSelecionada = [];
+    this.filtroOperadorSelecionado = [];
+    this.searchQuery = '';
+    this.applySearch();
+  }
+
+  ngOnDestroy(): void {
+    // Garante que o scroll volta ao normal ao sair do componente
+    this.renderer.removeClass(document.body, 'overflow-hidden');
+  }
+
   alternarArmaSelecionada(arma: string) {
     const index = this.filtroArmaSelecionada.indexOf(arma);
     if (index >= 0) {
@@ -184,14 +220,6 @@ export class HomeComponent implements OnInit {
     } else {
       this.filtroOperadorSelecionado.push(operador);
     }
-    this.applySearch();
-  }
-
-  limparFiltros() {
-    this.filtroTipo = '';
-    this.filtroArmaSelecionada = [];
-    this.filtroOperadorSelecionado = [];
-    this.searchQuery = '';
     this.applySearch();
   }
 
@@ -214,11 +242,11 @@ export class HomeComponent implements OnInit {
     this.filtroOperadorSelecionado = [];
 
     if (this.filtroTipo === 'ARMA') {
-      this.chunkedArmas = this.chunkArray(this.opcoesArmas, 15);
+      this.chunkedArmas = this.chunkArray(this.opcoesArmas, 200);
     }
 
     if (this.filtroTipo === 'HEADGEAR' || this.filtroTipo === 'UNIFORM') {
-      this.chunkedOperadores = this.chunkArray(this.opcoesOperadores, 15);
+      this.chunkedOperadores = this.chunkArray(this.opcoesOperadores, 200);
     }
 
     this.applySearch();
