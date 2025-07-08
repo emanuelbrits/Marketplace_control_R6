@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { supabase } from '../../supabase-client';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -39,6 +39,9 @@ export class HomeComponent implements OnInit {
   searchQuery = '';
   itemIdInput: string = '';
   isLoading = false;
+  isAtBottom = false;
+  showArrowDown = true;
+  isAnimating = false;
 
   // Filtros
   filtroTipo: string = '';
@@ -403,6 +406,37 @@ export class HomeComponent implements OnInit {
       console.log('Investimento salvo com sucesso:', data);
       alert('Investimento salvo com sucesso!');
       this.fecharModal(); // Fecha o modal após salvar
+    }
+  }
+
+  @HostListener('window:scroll', [])
+    onWindowScroll() {
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const pageHeight = document.body.offsetHeight;
+  
+      const atBottom = scrollPosition >= pageHeight - 20;
+  
+      if (atBottom !== this.isAtBottom) {
+        this.triggerIconAnimation(atBottom);
+      }
+    }
+  
+    triggerIconAnimation(atBottom: boolean) {
+      this.isAnimating = true;
+  
+      // Aguarda o início da animação antes de trocar o ícone
+      setTimeout(() => {
+        this.showArrowDown = !atBottom; // Troca o ícone só depois de iniciar a animação
+        this.isAnimating = false;
+        this.isAtBottom = atBottom;
+      }, 300); // Tempo da animação
+    }
+
+  scrollToPosition() {
+    if (this.isAtBottom) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
   }
 }

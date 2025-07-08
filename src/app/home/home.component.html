@@ -5,6 +5,14 @@
     <div *ngIf="loading" class="flex justify-center items-center text-white min-h-screen"><span
             class="loading loading-spinner loading-xl"></span></div>
 
+    <button (click)="scrollToPosition()"
+        class="fixed bottom-4 right-4 bg-orange-500 hover:bg-orange-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow animate-bounce z-40">
+
+        <span class="material-icons transition-transform duration-300" [ngClass]="{ 'animate-spin': isAnimating }">
+            {{ showArrowDown ? 'arrow_downward' : 'arrow_upward' }}
+        </span>
+    </button>
+
     <div class="py-4 flex flex-col justify-start mt-[4rem]">
         <div class="flex flex-row gap-2">
             <input type="text" [(ngModel)]="itemIdInput" placeholder="Digite o ID do item"
@@ -41,7 +49,8 @@
             class="input input-bordered w-[18rem] border bg-white text-black border-gray-400 p-2 rounded" />
     </div>
 
-    <div *ngIf="mostrarFiltros" @fadeSlide class="fixed flex flex-col md:justify-center md:items-center inset-0 lg:text-lg bg-gray-950 p-8 rounded text-white z-50 h-screen w-full">
+    <div *ngIf="mostrarFiltros" @fadeSlide
+        class="fixed flex flex-col md:justify-center md:items-center inset-0 lg:text-lg bg-gray-950 p-8 rounded text-white z-50 h-screen w-full">
         <div class="flex justify-start items-start mb-4">
             <h2 class="text-lg font-bold md:text-2xl lg:text-4xl">Filtros</h2>
         </div>
@@ -103,8 +112,9 @@
                             <div
                                 class="w-6 h-6 rounded-md border-2 border-white peer-checked:bg-orange-500 peer-checked:border-orange-500 flex items-center justify-center transition-colors duration-200">
                                 <!-- Check branco -->
-                                <svg *ngIf="filtroOperadorSelecionado.includes(operador)" xmlns="http://www.w3.org/2000/svg"
-                                    class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                <svg *ngIf="filtroOperadorSelecionado.includes(operador)"
+                                    xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20"
+                                    fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
                                         clip-rule="evenodd" />
@@ -118,8 +128,7 @@
             </div>
 
             <div class="flex flex-col md:w-[16rem]">
-                <button (click)="fecharFiltros()"
-                    class="text-xl bg-orange-600 text-white py-2 rounded-full mb-4">
+                <button (click)="fecharFiltros()" class="text-xl bg-orange-600 text-white py-2 rounded-full mb-4">
                     Aplicar
                 </button>
                 <button (click)="limparFiltros()" class="text-xl text-white py-2 border border-white rounded-full mb-4">
@@ -175,8 +184,8 @@
 <div *ngIf="modalAberto" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
     (click)="fecharModal()">
     <div class="bg-zinc-900 border-slate-600 border-2 p-8 rounded-lg shadow-lg w-96" (click)="$event.stopPropagation()">
-        <img [src]="modalItem.url_foto" alt="Imagem do Item"
-            class="object-contain w-full min-h-[16.5rem] rounded" *ngIf="modalItem.url_foto" />
+        <img [src]="modalItem.url_foto" alt="Imagem do Item" class="object-contain w-full min-h-[16.5rem] rounded"
+            *ngIf="modalItem.url_foto" />
         <!-- Usar o nome do item no título -->
         <h2 class="text-center text-2xl font-bold mt-4 mb-4 text-white">{{ modalItem.nome }}</h2>
 
@@ -198,7 +207,8 @@
         <div class="flex justify-end mt-4">
             <button (click)="fecharModal()"
                 class="px-4 py-2 bg-transparent text-white rounded mr-2 text-lg">Cancelar</button>
-            <button (click)="salvarModal()" class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-700 text-white rounded text-lg">Salvar</button>
+            <button (click)="salvarModal()"
+                class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-700 text-white rounded text-lg">Salvar</button>
         </div>
     </div>
 </div>
