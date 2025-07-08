@@ -174,11 +174,11 @@
 <!-- Modal -->
 <div *ngIf="modalAberto" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
     (click)="fecharModal()">
-    <div class="bg-gray-400 border-slate-600 border-2 p-8 rounded-lg shadow-lg w-96" (click)="$event.stopPropagation()">
+    <div class="bg-zinc-900 border-slate-600 border-2 p-8 rounded-lg shadow-lg w-96" (click)="$event.stopPropagation()">
         <img [src]="modalItem.url_foto" alt="Imagem do Item"
-            class="object-contain w-full min-h-[16.5rem] rounded bg-black" *ngIf="modalItem.url_foto" />
+            class="object-contain w-full min-h-[16.5rem] rounded" *ngIf="modalItem.url_foto" />
         <!-- Usar o nome do item no título -->
-        <h2 class="text-center text-2xl font-bold mt-4 mb-4 text-black">{{ modalItem.nome }}</h2>
+        <h2 class="text-center text-2xl font-bold mt-4 mb-4 text-white">{{ modalItem.nome }}</h2>
 
         <div class="flex flex-row justify-between w-full">
             <!-- Campos do Modal -->
@@ -198,7 +198,7 @@
         <div class="flex justify-end mt-4">
             <button (click)="fecharModal()"
                 class="px-4 py-2 bg-transparent text-white rounded mr-2 text-lg">Cancelar</button>
-            <button (click)="salvarModal()" class="px-4 py-2 bg-black text-white rounded text-lg">Salvar</button>
+            <button (click)="salvarModal()" class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-700 text-white rounded text-lg">Salvar</button>
         </div>
     </div>
 </div>

@@ -350,11 +350,13 @@ export class HomeComponent implements OnInit {
       campo2: '',
     };
     this.modalAberto = true;
+    this.renderer.addClass(document.body, 'overflow-hidden');
   }
 
   // Função para fechar o modal
   fecharModal() {
     this.modalAberto = false;
+    this.renderer.removeClass(document.body, 'overflow-hidden');
   }
 
   // Função para salvar os dados no modal
