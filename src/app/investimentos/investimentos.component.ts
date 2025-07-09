@@ -13,6 +13,7 @@ import {
   transition,
 } from '@angular/animations';
 import { ViewChildren, ElementRef, QueryList } from '@angular/core';
+import { TopInvestimentosComponent } from "./top-investimentos/top-investimentos.component";
 
 interface Investimento {
   id: number;
@@ -32,7 +33,7 @@ interface Investimento {
   selector: 'app-investimentos',
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent],
   animations: [
     trigger('detalheAnimacao', [
       transition(':enter', [
