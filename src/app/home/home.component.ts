@@ -7,13 +7,14 @@ import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../shared/navbar/navbar.component";
 import { PaginationComponent } from "../shared/pagination/pagination.component";
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ScrollButtonComponent } from "../shared/scroll-button/scroll-button.component";
 
 @Component({
   selector: 'home-root',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent, PaginationComponent, ScrollButtonComponent],
   animations: [
     trigger('fadeSlide', [
       transition(':enter', [
@@ -39,9 +40,6 @@ export class HomeComponent implements OnInit {
   searchQuery = '';
   itemIdInput: string = '';
   isLoading = false;
-  isAtBottom = false;
-  showArrowDown = true;
-  isAnimating = false;
 
   // Filtros
   filtroTipo: string = '';
@@ -406,37 +404,6 @@ export class HomeComponent implements OnInit {
       console.log('Investimento salvo com sucesso:', data);
       alert('Investimento salvo com sucesso!');
       this.fecharModal(); // Fecha o modal após salvar
-    }
-  }
-
-  @HostListener('window:scroll', [])
-    onWindowScroll() {
-      const scrollPosition = window.innerHeight + window.scrollY;
-      const pageHeight = document.body.offsetHeight;
-  
-      const atBottom = scrollPosition >= pageHeight - 20;
-  
-      if (atBottom !== this.isAtBottom) {
-        this.triggerIconAnimation(atBottom);
-      }
-    }
-  
-    triggerIconAnimation(atBottom: boolean) {
-      this.isAnimating = true;
-  
-      // Aguarda o início da animação antes de trocar o ícone
-      setTimeout(() => {
-        this.showArrowDown = !atBottom; // Troca o ícone só depois de iniciar a animação
-        this.isAnimating = false;
-        this.isAtBottom = atBottom;
-      }, 300); // Tempo da animação
-    }
-
-  scrollToPosition() {
-    if (this.isAtBottom) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
   }
 }

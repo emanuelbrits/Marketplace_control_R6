@@ -14,6 +14,7 @@ import {
 } from '@angular/animations';
 import { ViewChildren, ElementRef, QueryList } from '@angular/core';
 import { TopInvestimentosComponent } from "./top-investimentos/top-investimentos.component";
+import { ScrollButtonComponent } from "../shared/scroll-button/scroll-button.component";
 
 interface Investimento {
   id: number;
@@ -33,7 +34,7 @@ interface Investimento {
   selector: 'app-investimentos',
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent, ScrollButtonComponent],
   animations: [
     trigger('detalheAnimacao', [
       transition(':enter', [
@@ -67,9 +68,6 @@ export class InvestimentosComponent implements OnInit {
   data_atual: Date = new Date();
   currentPage = 1;
   itemsPerPage = 40;
-  isAtBottom = false;
-  showArrowDown = true;
-  isAnimating = false;
 
   icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp, BanknoteArrowDown };
 
@@ -79,37 +77,6 @@ export class InvestimentosComponent implements OnInit {
     await this.carregarInvestimentos();
     this.investimentosFiltradosBusca = [...this.investimentos];
     this.carregarValoresMedios();
-  }
-
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const pageHeight = document.body.offsetHeight;
-
-    const atBottom = scrollPosition >= pageHeight - 20;
-
-    if (atBottom !== this.isAtBottom) {
-      this.triggerIconAnimation(atBottom);
-    }
-  }
-
-  triggerIconAnimation(atBottom: boolean) {
-    this.isAnimating = true;
-
-    // Aguarda o início da animação antes de trocar o ícone
-    setTimeout(() => {
-      this.showArrowDown = !atBottom; // Troca o ícone só depois de iniciar a animação
-      this.isAnimating = false;
-      this.isAtBottom = atBottom;
-    }, 300); // Tempo da animação
-  }
-
-  scrollToPosition() {
-    if (this.isAtBottom) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
   }
 
   willProfit(investimento: Investimento): boolean {
