@@ -57,7 +57,7 @@ export class RetornoGraficoComponent implements OnChanges {
 
       if (item.valor_vendido > 0) {
         const valor = item.valor_vendido * 0.9 - item.valor_compra;
-        retornoReal[vendaKey] = (retornoReal[vendaKey] || 0) + valor;
+        retornoReal[vendaKey] = ((retornoReal[vendaKey] || 0) + valor);
         this.retornoReal += valor
         
       } else {
