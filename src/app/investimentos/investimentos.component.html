@@ -4,6 +4,8 @@
 
     <app-top-investimentos [investimentos]="investimentos"></app-top-investimentos>
 
+    <app-retorno-grafico *ngIf="valoresMediosCarregados" [investimentos]="investimentos"></app-retorno-grafico>
+
     <!-- Botões de filtro -->
     <!-- Filtro: Aguardando / Vendidos -->
     <div class="flex flex-wrap gap-4 mt-[2rem] mb-4 justify-start items-center">
@@ -86,7 +88,7 @@
                     <div class="flex flex-row items-center gap-2">
                         <lucide-icon class="text-2xl text-white" name="banknote-arrow-up"></lucide-icon>
                         <div
-                            class="flex fles-row justify-center text-s w-[5.5rem] px-3 py-1 rounded-full shadow bg-black text-white">
+                            class="flex flex-row justify-center text-s w-[5.5rem] px-3 py-1 rounded-full shadow bg-black text-white">
                             <span class="inline-flex items-center">
                                 <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
                                     class="w-5 h-5 mr-2" />
@@ -298,13 +300,15 @@
                             class="input w-full bg-black text-white mt-2 xl:mt-4" />
 
                         <div *ngIf="investimento.valor_vendido <= 0">
-                            <p class="text-white mb-2 mt-4 xl:mt-8"><strong>Data de Venda:</strong> {{ investimento.data_venda
+                            <p class="text-white mb-2 mt-4 xl:mt-8"><strong>Data de Venda:</strong> {{
+                                investimento.data_venda
                                 |date:'dd/MM/yyyy HH:mm' }}</p>
                         </div>
                     </div>
 
                     <!-- Ações -->
-                    <div class="mt-4 flex justify-between md:justify-start gap-4 flex-wrap lg:mt-[3.3rem] xl:mt-[4.6rem]">
+                    <div
+                        class="mt-4 flex justify-between md:justify-start gap-4 flex-wrap lg:mt-[3.3rem] xl:mt-[4.6rem]">
                         <div class="flex flex-row gap-2">
                             <button (click)="updateInvestimento(investimento.id_item)"
                                 class="btn bg-gradient-to-r from-green-500 to-green-700 shadow-md text-white px-4 py-2 rounded-lg">

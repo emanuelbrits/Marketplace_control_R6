@@ -1,0 +1,35 @@
+<!-- Botão de ativação -->
+<div class="flex items-center justify-between xl:justify-normal xl:gap-4 mb-4 mt-[2rem] cursor-pointer select-none"
+  (click)="mostrarGrafico = !mostrarGrafico">
+  <h2 class="text-2xl md:text-3xl font-bold text-orange-500">Retorno Obtido x Retorno Estimado</h2>
+  <span class="material-icons text-4xl text-orange-500 transition-transform duration-300"
+    [ngClass]="{ 'rotate-180': mostrarGrafico }">expand_more</span>
+</div>
+
+<!-- Spinner de carregamento -->
+<div *ngIf="loading" class="flex justify-center items-center h-64">
+  <span class="material-icons animate-spin text-orange-500 text-4xl">autorenew</span>
+</div>
+
+<!-- Gráfico -->
+<div *ngIf="!loading && mostrarGrafico"
+  class="flex flex-col items-center bg-zinc-900 rounded p-4 shadow text-white w-full max-w-3xl mx-auto h-[20rem] md:h-[30rem] transition-all duration-300 ease-in-out">
+
+  <div class="flex flex-row w-full justify-around gap-6 mb-4">
+    <p class="inline-flex items-center">
+      <img
+        src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+        class="w-5 h-5 mr-2" />
+      {{ retornoReal.toFixed(0) }}
+    </p>
+    <p class="inline-flex items-center">
+      <img
+        src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+        class="w-5 h-5 mr-2" />
+      {{ retornoEstimado.toFixed(0) }}
+    </p>
+  </div>
+
+  <canvas baseChart [data]="{ labels: labels, datasets: datasets }" [type]="'line'" [options]="options" class="h-full">
+  </canvas>
+</div>

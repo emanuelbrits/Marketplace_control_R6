@@ -15,6 +15,8 @@ import {
 import { ViewChildren, ElementRef, QueryList } from '@angular/core';
 import { TopInvestimentosComponent } from "./top-investimentos/top-investimentos.component";
 import { ScrollButtonComponent } from "../shared/scroll-button/scroll-button.component";
+import { RetornoGraficoComponent } from "../shared/retorno-grafico/retorno-grafico.component";
+import { forkJoin, map } from 'rxjs';
 
 interface Investimento {
   id: number;
@@ -28,13 +30,14 @@ interface Investimento {
   data_venda: string;
   data_vendaDate: Date; // Nova variável para a data de venda
   valor_minimo_venda: number; // Nova variável para o valor mínimo de venda
+  retornoEstimado?: number; // Adiciona retornoEstimado opcional
 }
 
 @Component({
   selector: 'app-investimentos',
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent, ScrollButtonComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent, ScrollButtonComponent, RetornoGraficoComponent],
   animations: [
     trigger('detalheAnimacao', [
       transition(':enter', [
@@ -68,6 +71,7 @@ export class InvestimentosComponent implements OnInit {
   data_atual: Date = new Date();
   currentPage = 1;
   itemsPerPage = 40;
+  valoresMediosCarregados = false;
 
   icons = { ChevronDown, ChevronUp, AlarmClockCheck, AlarmClockMinus, Check, X, BanknoteArrowUp, BanknoteArrowDown };
 
@@ -158,17 +162,40 @@ export class InvestimentosComponent implements OnInit {
   }
 
   carregarValoresMedios() {
-    this.investimentosFiltrados.forEach((item) => {
-      this.http.get<{ valorMedio: string }>(`https://valormedio-m7s4cidcaa-uc.a.run.app/valorMedio?itemId=${item.id_item}`)
-        .subscribe({
-          next: (res) => {
-            this.valoresMedios[item.id_item] = Number(res.valorMedio);
-            this.retornoEstimado += Math.trunc(Number((Number(res.valorMedio) - (Number(res.valorMedio) * 0.1)) - item.valor_compra))
-          },
-          error: (err) => {
-            console.error(`Erro ao buscar valor médio do item ${item.id_item}`, err);
+    const requests = this.investimentosFiltrados.map(item =>
+      this.http.get<{ valorMedio: string }>(
+        `https://valormedio-m7s4cidcaa-uc.a.run.app/valorMedio?itemId=${item.id_item}`
+      ).pipe(
+        map(res => ({
+          id_item: item.id_item,
+          valor_compra: item.valor_compra,
+          valorMedio: Number(res.valorMedio)
+        }))
+      )
+    );
+
+    forkJoin(requests).subscribe({
+      next: resultados => {
+        resultados.forEach(({ id_item, valorMedio, valor_compra }) => {
+          const estimado = Math.trunc((valorMedio * 0.9) - valor_compra);
+          this.valoresMedios[id_item] = valorMedio;
+
+          // Adiciona `retornoEstimado` no investimento correspondente
+          const investimento = this.investimentos.find(i => i.id_item === id_item && i.valor_vendido === 0);
+          if (investimento) {
+            investimento.retornoEstimado = estimado;
           }
+
+          // Acumula total estimado
+          this.retornoEstimado += estimado;
         });
+
+        this.valoresMediosCarregados = true;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar valores médios:', err);
+        this.valoresMediosCarregados = true; // mesmo com erro, liberamos a renderização
+      }
     });
   }
 
