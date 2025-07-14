@@ -4,6 +4,10 @@
 
     <app-top-investimentos [investimentos]="investimentos"></app-top-investimentos>
 
+    <div *ngIf="!valoresMediosCarregados" class="max-w-sm animate-pulse mb-4 mt-[2rem]">
+        <div class="h-12 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+    </div>
+
     <app-retorno-grafico *ngIf="valoresMediosCarregados" [investimentos]="investimentos"></app-retorno-grafico>
 
     <!-- Botões de filtro -->

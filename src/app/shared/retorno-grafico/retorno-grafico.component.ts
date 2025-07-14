@@ -2,8 +2,8 @@ import { Component, Input, OnChanges } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { CommonModule } from '@angular/common';
-import { format, addDays } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format } from 'date-fns';
+import { es, ptBR } from 'date-fns/locale';
 
 @Component({
   selector: 'app-retorno-grafico',
@@ -14,18 +14,43 @@ import { ptBR } from 'date-fns/locale';
 export class RetornoGraficoComponent implements OnChanges {
   @Input() investimentos: any[] = [];
   loading = true;
-  retornoEstimado: number = 0;
-  retornoReal: number = 0;
   mostrarGrafico = false;
+  modalAberto = false;
+  itensSelecionados: any[] = [];
+  tipoGraficoSelecionado: 'real' | 'estimado' | null = null;
+  dataSelecionada: string = '';
 
-  labels: string[] = [];
-  datasets: ChartDataset<'line'>[] = [];
+  retornoEstimado = 0;
+  retornoReal = 0;
+
+  retornoEstimadoDia = 0;
+  retornoRealMes = 0;
+
+  // Gráfico de retorno real (mensal)
+  labelsRetornoReal: string[] = [];
+  datasetRetornoReal: ChartDataset<'line'> = {
+    label: 'Retorno Obtido',
+    data: [],
+    borderColor: '#10B981',
+    tension: 0.3,
+    pointBackgroundColor: 'white'
+  };
+
+  // Gráfico de retorno estimado (por dia)
+  labelsEstimadoDias: string[] = [];
+  datasetEstimadoDias: ChartDataset<'line'> = {
+    label: 'Retorno Estimado',
+    data: [],
+    borderColor: '#F97316',
+    borderDash: [5, 5],
+    tension: 0.3,
+    pointBackgroundColor: 'white'
+  };
+
   options: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
-      legend: {
-        labels: { color: 'white' }
-      }
+      legend: { labels: { color: 'white' } }
     },
     scales: {
       x: { ticks: { color: 'white' }, grid: { color: '#444' } },
@@ -36,66 +61,135 @@ export class RetornoGraficoComponent implements OnChanges {
   ngOnChanges(): void {
     this.gerarDadosGrafico();
     this.loading = false;
+    this.toggleBodyScroll(this.modalAberto);
+  }
+
+  toggleBodyScroll(ativo: boolean) {
+    if (ativo) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
   }
 
   gerarDadosGrafico() {
-    if (!this.investimentos) return;
+    if (!this.investimentos?.length) return;
 
-    const retornoReal: Record<string, number> = {};
-    const retornoEstimado: Record<string, number> = {};
-    const datas: Record<string, string> = {}; // { "2024-12": "dez 24" }
+    this.retornoEstimado = 0;
+    this.retornoReal = 0;
+
+    // ----- RETORNO REAL POR MÊS -----
+    const retornoRealMensal: Record<string, number> = {};
+    const datasFormatadas: Record<string, string> = {};
 
     for (const item of this.investimentos) {
-      const compra = new Date(item.data_compra);
-      const venda = new Date(compra);
-      venda.setDate(venda.getDate() + 15);
-
-      const vendaKey = format(venda, 'yyyy-MM'); // formato técnico para ordenação
-      const vendaLabel = format(venda, 'MMM yy', { locale: ptBR });
-
-      datas[vendaKey] = vendaLabel;
-
       if (item.valor_vendido > 0) {
-        const valor = item.valor_vendido * 0.9 - item.valor_compra;
-        retornoReal[vendaKey] = ((retornoReal[vendaKey] || 0) + valor);
-        this.retornoReal += valor
-        
-      } else {
-        const estimado = item.retornoEstimado;
-        retornoEstimado[vendaKey] = (retornoEstimado[vendaKey] || 0) + estimado;
-        this.retornoEstimado += estimado
+        const compra = new Date(item.data_compra);
+        const venda = new Date(compra);
+        venda.setDate(compra.getDate() + 15);
+
+        const chave = format(venda, 'yyyy-MM');
+        const label = format(venda, 'MMM yy', { locale: ptBR });
+
+        datasFormatadas[chave] = label;
+
+        const lucro = item.valor_vendido * 0.9 - item.valor_compra;
+        retornoRealMensal[chave] = (retornoRealMensal[chave] || 0) + lucro;
+        this.retornoReal += lucro;
       }
     }
 
-    // Gerar conjunto único de meses (ordenados)
-    const mesesUnicos = Array.from(
-      new Set([
-        ...Object.keys(retornoReal),
-        ...Object.keys(retornoEstimado),
-      ])
-    ).sort();
+    const mesesOrdenados = Object.keys(retornoRealMensal).sort();
+    this.labelsRetornoReal = mesesOrdenados.map(key => datasFormatadas[key]);
+    this.datasetRetornoReal.data = mesesOrdenados.map(key => retornoRealMensal[key]);
 
-    const mesesOrdenados = Object.keys(datas).sort(); // ordena por "2024-12", "2025-01", etc.
+    // ----- ESTIMATIVA POR DATA DE VENDA REAL -----
+    const retornoEstimadoPorData: Record<string, number> = {}; // key = 'dd/MM'
+    const datasUnicas: Set<string> = new Set();
 
-    this.labels = mesesOrdenados.map(key => datas[key]);
+    for (const item of this.investimentos) {
+      if (item.valor_vendido === 0 && item.retornoEstimado) {
+        const compra = new Date(item.data_compra);
+        const venda = new Date(compra);
+        venda.setDate(venda.getDate() + 15);
 
-    this.datasets = [
-      {
-        label: 'Retorno Obtido',
-        data: mesesOrdenados.map(m => retornoReal[m] || 0),
-        borderColor: '#10B981',
-        tension: 0.3,
-        pointBackgroundColor: 'white'
-      },
-      {
-        label: 'Retorno Estimado',
-        data: mesesOrdenados.map(m => retornoEstimado[m] || 0),
-        borderColor: '#F97316',
-        borderDash: [5, 5],
-        tension: 0.3,
-        pointBackgroundColor: 'white'
+        const dataLabel = format(venda, 'dd/MM');
+        datasUnicas.add(dataLabel);
+
+        retornoEstimadoPorData[dataLabel] = (retornoEstimadoPorData[dataLabel] || 0) + item.retornoEstimado;
+        this.retornoEstimado += item.retornoEstimado;
       }
-    ];
+    }
 
+    // Ordenar as datas por data real, não por string
+    const datasOrdenadas = Array.from(datasUnicas).sort((a, b) => {
+      const da = new Date(a.split('/').reverse().join('-'));
+      const db = new Date(b.split('/').reverse().join('-'));
+      return da.getTime() - db.getTime();
+    });
+
+    this.labelsEstimadoDias = datasOrdenadas;
+    this.datasetEstimadoDias.data = datasOrdenadas.map(data => retornoEstimadoPorData[data]);
+  }
+
+  onChartClick(event: any, tipo: 'real' | 'estimado') {
+    const activePoints = event.active;
+    if (!activePoints.length) return;
+
+    const index = activePoints[0].index;
+
+    if (tipo === 'real') {
+      const dataLabel = this.labelsRetornoReal[index]; // Ex: "jul 24"
+      this.dataSelecionada = dataLabel;
+      let obtidoMes = 0;
+
+      const [mesTexto, anoTexto] = dataLabel.split(' ');
+      const mesesMap: any = { jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5, jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11 };
+      const mes = mesesMap[mesTexto];
+      const ano = Number('20' + anoTexto); // "24" → 2024
+
+      this.itensSelecionados = this.investimentos.filter(i => {
+        if (i.valor_vendido > 0) {
+          const compra = new Date(i.data_compra);
+          const venda = new Date(compra);
+          obtidoMes += i.valor_vendido * 0.9 - i.valor_compra;
+          this.retornoRealMes = obtidoMes;
+          venda.setDate(compra.getDate() + 15);
+          return venda.getFullYear() === ano && venda.getMonth() === mes;
+        }
+        return false;
+      });
+    }
+
+    if (tipo === 'estimado') {
+      const dataLabel = this.labelsEstimadoDias[index]; // Ex: "12/07"
+      this.dataSelecionada = dataLabel;
+      let estimadoDia = 0;
+
+      this.itensSelecionados = this.investimentos.filter(i => {
+        if (i.valor_vendido === 0 && i.retornoEstimado) {
+          const compra = new Date(i.data_compra);
+          const venda = new Date(compra);
+          estimadoDia += i.retornoEstimado;
+          this.retornoEstimadoDia = estimadoDia;
+          venda.setDate(compra.getDate() + 15);
+          return format(venda, 'dd/MM') === dataLabel;
+        }
+        return false;
+      });
+    }
+
+    this.tipoGraficoSelecionado = tipo;
+    this.abrirModal();
+  }
+
+  abrirModal() {
+    this.modalAberto = true;
+    this.toggleBodyScroll(true);
+  }
+
+  fecharModal() {
+    this.modalAberto = false;
+    this.toggleBodyScroll(false);
   }
 }

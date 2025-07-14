@@ -36,7 +36,6 @@ export class RegisterComponent {
     }
 
     // Registro bem-sucedido
-    alert('Registro criado! Verifique seu e-mail para confirmar sua conta.');
     this.router.navigate(['/login']);
   }
 
