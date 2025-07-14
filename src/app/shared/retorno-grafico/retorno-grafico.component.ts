@@ -153,12 +153,15 @@ export class RetornoGraficoComponent implements OnChanges {
           const compra = new Date(i.data_compra);
           const venda = new Date(compra);
           obtidoMes += i.valor_vendido * 0.9 - i.valor_compra;
-          this.retornoRealMes = obtidoMes;
           venda.setDate(compra.getDate() + 15);
           return venda.getFullYear() === ano && venda.getMonth() === mes;
         }
         return false;
       });
+
+      this.retornoRealMes = this.itensSelecionados.reduce((total, item) => {
+        return total + (item.valor_vendido * 0.9 - item.valor_compra);
+      }, 0);
     }
 
     if (tipo === 'estimado') {
@@ -177,6 +180,10 @@ export class RetornoGraficoComponent implements OnChanges {
         }
         return false;
       });
+
+      this.retornoEstimadoDia = this.itensSelecionados.reduce((total, item) => {
+        return total + item.retornoEstimado;
+      }, 0);
     }
 
     this.tipoGraficoSelecionado = tipo;
