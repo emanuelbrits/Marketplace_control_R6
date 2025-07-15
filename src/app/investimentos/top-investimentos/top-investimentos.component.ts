@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { supabase } from '../../../supabase-client';
 
 interface Investimento {
   id: number;
@@ -14,6 +15,7 @@ interface Investimento {
   data_venda: string;
   data_vendaDate: Date; // Nova variável para a data de venda
   valor_minimo_venda: number; // Nova variável para o valor mínimo de venda
+  ignorar: boolean;
 }
 
 @Component({
@@ -36,6 +38,9 @@ export class TopInvestimentosComponent implements OnChanges {
   @Input() investimentos: any[] = [];
   top5: any[] = [];
   mostrarSugestoes = false;
+  mostrarIgnorados = false;
+  itensFiltrados: any[] = [];
+  itensIgnorados: any[] = [];
 
   ngOnChanges(): void {
     this.calcularTop5();
@@ -44,7 +49,6 @@ export class TopInvestimentosComponent implements OnChanges {
   calcularTop5() {
     if (!this.investimentos) return;
 
-    // Agrupar por id_item
     const grupos = new Map<number, any[]>();
 
     this.investimentos.forEach(item => {
@@ -54,12 +58,11 @@ export class TopInvestimentosComponent implements OnChanges {
       grupos.get(item.id_item)!.push(item);
     });
 
-    const topItems: any[] = [];
+    const todosTopItems: any[] = [];
 
-    grupos.forEach((itens, id_item) => {
+    grupos.forEach((itens) => {
       const possuiAinda = itens.some(i => i.valor_vendido === 0);
       if (!possuiAinda) {
-        // Pega o item vendido com maior lucro percentual
         const vendidos = itens.filter(i => i.valor_vendido > 0);
         const melhores = vendidos
           .map(i => ({
@@ -69,14 +72,26 @@ export class TopInvestimentosComponent implements OnChanges {
           .sort((a, b) => b.lucroPercentual - a.lucroPercentual);
 
         if (melhores.length > 0) {
-          topItems.push(melhores[0]); // Só o melhor de cada grupo
+          todosTopItems.push(melhores[0]);
         }
       }
     });
 
-    this.top5 = topItems
+    // Filtra e limita separadamente
+    this.itensFiltrados = todosTopItems
+      .filter(i => !i.ignorar)
       .sort((a, b) => b.lucroPercentual - a.lucroPercentual)
       .slice(0, 5);
+
+    this.itensIgnorados = todosTopItems
+      .filter(i => i.ignorar)
+      .sort((a, b) => b.lucroPercentual - a.lucroPercentual)
+      .slice(0, 5);
+  }
+
+  atualizarListas() {
+    this.itensFiltrados = this.top5.filter(i => i.ignorar === false);
+    this.itensIgnorados = this.top5.filter(i => i.ignorar === true);
   }
 
   openMarketplace(investimento: Investimento) {
@@ -87,5 +102,28 @@ export class TopInvestimentosComponent implements OnChanges {
     if (investimento.valor_vendido === 0) {
       window.open(`https://www.ubisoft.com/en-us/game/rainbow-six/siege/marketplace?route=sell%2Fitem-details&itemId=${investimento.id_item}`, '_blank');
     }
+  }
+
+  async turnIgnorar(investimento: Investimento) {
+
+    investimento.ignorar = !investimento.ignorar;
+
+    const { error } = await supabase
+      .from('investimento')
+      .update({
+        ignorar: investimento.ignorar
+      })
+      .eq('id', investimento.id);
+
+    if (error) throw error;
+
+    // Atualiza o investimento no array
+    const index = this.investimentos.findIndex(i => i.id === investimento.id);
+    if (index !== -1) {
+      this.investimentos[index] = investimento;
+    }
+
+    // Recalcula o top 5 após a alteração
+    this.calcularTop5();
   }
 }

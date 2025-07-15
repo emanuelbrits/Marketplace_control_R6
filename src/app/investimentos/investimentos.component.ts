@@ -31,6 +31,7 @@ interface Investimento {
   data_vendaDate: Date; // Nova variável para a data de venda
   valor_minimo_venda: number; // Nova variável para o valor mínimo de venda
   retornoEstimado?: number; // Adiciona retornoEstimado opcional
+  ignorar: boolean;
 }
 
 @Component({
@@ -299,7 +300,8 @@ export class InvestimentosComponent implements OnInit {
           valor_compra,
           valor_vendido,
           data_compra,
-          itens (nome, url_foto, tipo)
+          itens (nome, url_foto, tipo),
+          ignorar
         `)
         .eq('id_usuario', user.id) // Filtra pelo ID do usuário
         .order('data_compra', { ascending: true }); // Ordena por data_compra
@@ -329,7 +331,7 @@ export class InvestimentosComponent implements OnInit {
         if (item.valor_vendido > 0) {
           totalRetorno += (item.valor_vendido * 0.9) - item.valor_compra; // Subtraindo 10% do valor vendido
         }
-
+        
         return {
           id: item.id,
           id_item: item.id_item,
@@ -342,6 +344,7 @@ export class InvestimentosComponent implements OnInit {
           data_venda: dataVenda.toISOString(), // Inclui hora e minuto na data
           data_vendaDate: dataVendaDate, // Nova variável para a data de venda
           valor_minimo_venda: valorMinimoVenda, // Adiciona o valor mínimo de venda
+          ignorar: item.ignorar
         };
       });
 

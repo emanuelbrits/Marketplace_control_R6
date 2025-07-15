@@ -4,11 +4,23 @@ import { ChartDataset, ChartOptions } from 'chart.js';
 import { CommonModule } from '@angular/common';
 import { format } from 'date-fns';
 import { es, ptBR } from 'date-fns/locale';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-retorno-grafico',
   standalone: true,
   imports: [CommonModule, BaseChartDirective],
+  animations: [
+    trigger('fadeSlide', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-0.5rem)' }),
+        animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+      transition(':leave', [
+        animate('500ms ease-out', style({ opacity: 0, transform: 'translateY(-0.5rem)' })),
+      ])
+    ])
+  ],
   templateUrl: './retorno-grafico.component.html'
 })
 export class RetornoGraficoComponent implements OnChanges {
