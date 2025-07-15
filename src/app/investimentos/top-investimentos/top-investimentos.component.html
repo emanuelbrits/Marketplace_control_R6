@@ -15,21 +15,22 @@
     <button (click)="mostrarIgnorados = !mostrarIgnorados" class="text-white underline">
       {{ mostrarIgnorados ? 'Ocultar ignorados' : 'Exibir ignorados' }}
     </button>
-    <div *ngIf="!mostrarIgnorados" class="flex flex-col gap-4">
+    <div *ngIf="!mostrarIgnorados" class="flex flex-col gap-4 lg:grid lg:grid-cols-3 2xl:grid-cols-5">
       <div *ngFor="let item of itensFiltrados"
-        class="flex flex-row gap-4 text-center bg-zinc-900 p-4 h-[14rem] md:h-[22rem] lg:h-[28rem] xl:h-[40rem] rounded shadow text-white">
-        <div class="flex flex-col justify-evenly w-[25%]">
+        class="flex flex-row lg:flex-col lg:items-center gap-4 text-center bg-zinc-900 p-4 h-[14rem] md:h-[22rem] lg:h-[30rem] rounded shadow text-white">
+        <div class="flex flex-col lg:gap-2 justify-evenly w-[25%]">
           <h3 class="font-anton text-2xl">{{ item.nome }}</h3>
           <h4 class="font-anton text-xl">{{ item.tipo }}</h4>
+          <p class="text-lg hidden lg:flex">Lucro: {{ item.lucroPercentual | number : '1.0-2' }}%</p>
         </div>
         <div class="flex justify-center w-[45%]">
           <img [src]="item.foto_url" alt="{{ item.nome }}"
             class="w-full xl:w-[30rem] h-full object-cover rounded mb-2" />
         </div>
-        <div class="flex flex-col w-[30%] justify-evenly items-center">
+        <div class="flex flex-col w-[30%] justify-evenly items-center lg:gap-4">
           <button (click)="turnIgnorar(item)"
-            class="hover:bg-slate-500 hover:rounded-full py-2 w-[50%] transition-all duration-300">Ignorar</button>
-          <p class="text-lg">Lucro: {{ item.lucroPercentual | number : '1.0-2' }}%</p>
+            class="btn bg-transparent border-none text-white hover:bg-slate-500 hover:rounded-full py-2 lg:py-0 transition-all duration-300">Ignorar</button>
+          <p class="text-lg lg:hidden">Lucro: {{ item.lucroPercentual | number : '1.0-2' }}%</p>
           <button (click)="openMarketplace(item)"
             class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white py-2 rounded-lg">
             Ver no marketplace
@@ -38,39 +39,39 @@
       </div>
     </div>
 
-    <div *ngIf="mostrarIgnorados" class="flex flex-col gap-4">
-      <div *ngIf="itensIgnorados.length > 0">
-        <div *ngFor="let item of itensIgnorados"
-          class="flex flex-row gap-4 text-center bg-zinc-900 p-4 h-[14rem] md:h-[22rem] lg:h-[28rem] xl:h-[40rem] rounded shadow text-white">
-          <div class="flex flex-col justify-evenly w-[25%]">
-            <h3 class="font-anton text-2xl">{{ item.nome }}</h3>
-            <h4 class="font-anton text-xl">{{ item.tipo }}</h4>
-          </div>
-          <div class="flex justify-center w-[45%]">
-            <img [src]="item.foto_url" alt="{{ item.nome }}"
-              class="w-full xl:w-[30rem] h-full object-cover rounded mb-2" />
-          </div>
-          <div class="flex flex-col w-[30%] justify-evenly items-center">
-            <button (click)="turnIgnorar(item)"
-              class="hover:bg-slate-500 hover:rounded-full py-2 w-[50%] transition-all duration-300">Exibir</button>
-            <p class="text-lg">Lucro: {{ item.lucroPercentual | number : '1.0-2' }}%</p>
-            <button (click)="openMarketplace(item)"
-              class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white py-2 rounded-lg">
-              Ver no marketplace
-            </button>
-          </div>
+    <div *ngIf="mostrarIgnorados && itensIgnorados.length > 0"
+      class="flex flex-col gap-4 lg:grid lg:grid-cols-3 2xl:grid-cols-5">
+      <div *ngFor="let item of itensIgnorados"
+        class="flex flex-row lg:flex-col lg:items-center gap-4 text-center bg-zinc-900 p-4 h-[14rem] md:h-[22rem] lg:h-[30rem] rounded shadow text-white">
+        <div class="flex flex-col lg:gap-2 justify-evenly w-[25%]">
+          <h3 class="font-anton text-2xl">{{ item.nome }}</h3>
+          <h4 class="font-anton text-xl">{{ item.tipo }}</h4>
+          <p class="text-lg hidden lg:flex">Lucro: {{ item.lucroPercentual | number : '1.0-2' }}%</p>
+        </div>
+        <div class="flex justify-center w-[45%]">
+          <img [src]="item.foto_url" alt="{{ item.nome }}"
+            class="w-full xl:w-[30rem] h-full object-cover rounded mb-2" />
+        </div>
+        <div class="flex flex-col w-[30%] justify-evenly items-center lg:gap-4">
+          <button (click)="turnIgnorar(item)"
+            class="btn bg-transparent border-none text-white hover:bg-slate-500 hover:rounded-full py-2 lg:py-0 transition-all duration-300">Exibir</button>
+          <p class="text-lg lg:hidden">Lucro: {{ item.lucroPercentual | number : '1.0-2' }}%</p>
+          <button (click)="openMarketplace(item)"
+            class="btn bg-gradient-to-r from-orange-500 to-orange-700 shadow-md text-white py-2 rounded-lg">
+            Ver no marketplace
+          </button>
         </div>
       </div>
-      <p *ngIf="itensIgnorados.length === 0" class="text-center text-gray-400">
-        Nenhum item ignorado.
-      </p>
     </div>
+    <p *ngIf="itensIgnorados.length === 0" class="text-center text-gray-400">
+      Nenhum item ignorado.
+    </p>
+  </div>
 
-    <div class="sticky bottom-0 flex justify-center mt-4">
-      <button (click)="mostrarSugestoes = false"
-        class="bg-orange-500 hover:bg-orange-600 text-white w-12 h-6 flex items-center justify-center shadow transition-transform duration-300 rounded-t-full">
-        <span class="material-icons transform rotate-180">expand_more</span>
-      </button>
-    </div>
+  <div class="sticky bottom-0 flex justify-center mt-4 lg:hidden">
+    <button (click)="mostrarSugestoes = false"
+      class="bg-orange-500 hover:bg-orange-600 text-white w-12 h-6 flex items-center justify-center shadow transition-transform duration-300 rounded-t-full">
+      <span class="material-icons transform rotate-180">expand_more</span>
+    </button>
   </div>
 </div>

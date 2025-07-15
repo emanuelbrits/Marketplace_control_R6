@@ -175,7 +175,7 @@
 </div>
 
 <!-- Modal -->
-<div *ngIf="modalAberto" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+<div *ngIf="modalAberto" @fadeSlide class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
     (click)="fecharModal()">
     <div class="bg-zinc-900 border-slate-600 border-2 p-8 rounded-lg shadow-lg w-96" (click)="$event.stopPropagation()">
         <img [src]="modalItem.url_foto" alt="Imagem do Item" class="object-contain w-full min-h-[16.5rem] rounded"
