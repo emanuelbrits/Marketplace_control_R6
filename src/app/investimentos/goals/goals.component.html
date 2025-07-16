@@ -1,0 +1,117 @@
+<!-- Botão de abertura -->
+<div class="flex items-center justify-between xl:justify-normal xl:gap-4 mb-4 mt-[2rem] cursor-pointer select-none"
+    (click)="mostrarMetas = !mostrarMetas">
+    <h2 class="text-2xl md:text-3xl font-bold text-orange-500">
+        Metas de Investimentos
+    </h2>
+    <button [ngClass]="{ 'rotate-180': mostrarMetas }" class="transition-transform duration-300">
+        <span class="material-icons text-orange-500 text-4xl">expand_more</span>
+    </button>
+</div>
+
+<!-- Seção de metas animada -->
+<div *ngIf="mostrarMetas" @fadeSlide class="mb-8 relative">
+    <div class="bg-zinc-900 p-4 rounded flex flex-col gap-6 text-white">
+
+        <!-- Metas Atuais -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Meta do Mês -->
+            <div class="flex flex-col items-center gap-2 bg-zinc-800 p-4 rounded shadow">
+                <h3 class="text-lg font-bold text-orange-500">Meta do Mês — {{ mesAtual | titlecase }}</h3>
+
+                <div class="relative w-24 h-24">
+                    <svg class="w-24 h-24 -rotate-90">
+                        <circle cx="48" cy="48" r="40" stroke="#444" stroke-width="8" fill="none" />
+                        <circle cx="48" cy="48" r="40" stroke="#F97316" stroke-width="8" stroke-linecap="round"
+                            fill="none" [attr.stroke-dasharray]="251.2"
+                            [attr.stroke-dashoffset]="251.2 - (251.2 * metaMesAtual.progresso) / 100"
+                            class="transition-all duration-700 ease-out" />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center text-xl font-bold">
+                        {{ metaMesAtual.progresso }}%
+                    </div>
+                </div>
+
+                <p class="inline-flex items-center text-sm text-green-400">
+                    <span class="text-sm">Obtido: </span>
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        class="ml-2 w-4 h-4 mr-2" />
+                    {{ metaMesAtual.valorObtido | number: '1.0-0' }}
+                </p>
+                <p class="inline-flex items-center">
+                    <span class="text-sm">Objetivo: </span>
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        class="ml-2 w-4 h-4 mr-2" />
+                    {{ metaMesAtual.valorObjetivo | number: '1.0-0' }}
+                </p>
+
+                <button (click)="editarMeta('mes')" class="text-orange-400 underline text-sm">Editar Meta</button>
+            </div>
+
+            <!-- Meta do Ano -->
+            <div class="flex flex-col items-center gap-2 bg-zinc-800 p-4 rounded shadow">
+                <h3 class="text-lg font-bold text-orange-500">Meta do Ano — {{ anoAtual }}</h3>
+                <!-- Barra circular de progresso -->
+                <div class="relative w-24 h-24">
+                    <svg class="w-24 h-24 rotate-[-90deg]">
+                        <circle cx="48" cy="48" r="40" stroke="#444" stroke-width="8" fill="none" />
+                        <circle cx="48" cy="48" r="40" stroke="#F97316" stroke-width="8" stroke-linecap="round"
+                            fill="none" [attr.stroke-dasharray]="251.2"
+                            [attr.stroke-dashoffset]="251.2 - (251.2 * metaAnoAtual.progresso) / 100"
+                            class="transition-all duration-700 ease-out" />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center text-xl font-bold">
+                        {{ metaAnoAtual.progresso }}%
+                    </div>
+                </div>
+
+                <p class="inline-flex items-center text-sm text-green-400">
+                    <span class="text-sm">Obtido: </span>
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        class="ml-2 w-4 h-4 mr-2" />
+                    {{ metaAnoAtual.valorObtido | number: '1.0-0' }}
+                </p>
+                <p class="inline-flex items-center">
+                    <span class="text-sm">Objetivo: </span>
+                    <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                        class="ml-2 w-4 h-4 mr-2" />
+                    {{ metaAnoAtual.valorObjetivo }}
+                </p>
+                <button (click)="editarMeta('ano')" class="text-orange-400 underline text-sm">Editar Meta</button>
+            </div>
+        </div>
+
+        <!-- Histórico de Metas -->
+        <div>
+            <h3 class="text-lg font-bold text-orange-500 mb-2">Histórico de Metas</h3>
+            <div *ngIf="historicoMetas.length > 0" class="space-y-2">
+                <div *ngFor="let meta of historicoMetas"
+                    class="flex justify-between bg-zinc-800 p-2 rounded shadow text-sm">
+                    <span>{{ meta.tipo | titlecase }} - {{ meta.periodo }}</span>
+                    <span [ngClass]="{ 'text-green-400': meta.bateu, 'text-red-400': !meta.bateu }">
+                        {{ meta.bateu ? 'Atingida' : 'Não Atingida' }}
+                    </span>
+                </div>
+            </div>
+            <p *ngIf="historicoMetas.length === 0" class="text-gray-400 text-center">Nenhuma meta registrada.</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal de edição -->
+<div *ngIf="modalAberto" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center">
+    <div class="bg-zinc-800 p-6 rounded shadow w-full max-w-md relative text-white">
+        <button (click)="fecharModal()" class="absolute top-2 right-2 text-white text-xl">&times;</button>
+
+        <h2 class="text-xl font-bold mb-4 text-orange-500">Editar Meta {{ tipoMetaModal === 'mes' ? 'Mensal' : 'Anual'
+            }}</h2>
+
+        <label class="block mb-2">Valor da Meta (R$)</label>
+        <input type="number" [(ngModel)]="valorMetaEdicao" class="w-full p-2 rounded bg-zinc-700 text-white mb-4" />
+
+        <button (click)="salvarMeta()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded w-full">
+            Salvar
+        </button>
+    </div>
+</div>

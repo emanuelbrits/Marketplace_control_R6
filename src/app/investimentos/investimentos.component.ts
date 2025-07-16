@@ -15,8 +15,9 @@ import {
 import { ViewChildren, ElementRef, QueryList } from '@angular/core';
 import { TopInvestimentosComponent } from "./top-investimentos/top-investimentos.component";
 import { ScrollButtonComponent } from "../shared/scroll-button/scroll-button.component";
-import { RetornoGraficoComponent } from "../shared/retorno-grafico/retorno-grafico.component";
+import { RetornoGraficoComponent } from "./retorno-grafico/retorno-grafico.component";
 import { forkJoin, map } from 'rxjs';
+import { GoalsComponent } from "./goals/goals.component";
 
 interface Investimento {
   id: number;
@@ -38,7 +39,7 @@ interface Investimento {
   selector: 'app-investimentos',
   templateUrl: './investimentos.component.html',
   styleUrls: ['./investimentos.component.css'],
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent, ScrollButtonComponent, RetornoGraficoComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, NavbarComponent, LucideAngularModule, TopInvestimentosComponent, ScrollButtonComponent, RetornoGraficoComponent, GoalsComponent],
   animations: [
     trigger('detalheAnimacao', [
       transition(':enter', [

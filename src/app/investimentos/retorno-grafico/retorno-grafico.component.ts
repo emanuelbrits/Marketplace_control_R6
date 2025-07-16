@@ -105,7 +105,7 @@ export class RetornoGraficoComponent implements OnChanges {
 
         datasFormatadas[chave] = label;
 
-        const lucro = item.valor_vendido * 0.9 - item.valor_compra;
+        const lucro = Math.floor(item.valor_vendido * 0.9 - item.valor_compra);
         retornoRealMensal[chave] = (retornoRealMensal[chave] || 0) + lucro;
         this.retornoReal += lucro;
       }
