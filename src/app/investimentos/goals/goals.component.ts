@@ -49,15 +49,33 @@ export class GoalsComponent {
   modalAberto = false;
   tipoMetaModal: 'mes' | 'ano' = 'mes';
   valorMetaEdicao = 0;
+  mesSelecionado = format(new Date(), 'MM/yyyy');
+  anoSelecionado = format(new Date(), 'yyyy');
 
-  historicoMetas = [
-    { tipo: 'mes', periodo: 'jun/2025', bateu: true },
-    { tipo: 'ano', periodo: '2024', bateu: false },
-  ];
+  mesesDisponiveis = Array.from({ length: 12 }, (_, i) => {
+    const data = new Date();
+    data.setMonth(i);
+    return {
+      value: format(data, 'MM/yyyy'),
+      label: format(data, 'MMM yyyy', { locale: ptBR })
+    };
+  });
+
+  anosDisponiveis = Array.from({ length: 2 }, (_, i) => {
+    const ano = new Date().getFullYear() - i;
+    return { value: ano.toString(), label: ano.toString() };
+  });
+
+  historicoMetas: { tipo: string; periodo: string; valorObjetivo: number, valorObtido: number }[] = [];
+
+  ngOnInit() {
+    this.atualizarProgresso();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['investimentos'] && this.investimentos?.length) {
       this.atualizarProgresso();
+      this.carregarHistoricoMetas();
     }
   }
 
@@ -71,21 +89,43 @@ export class GoalsComponent {
     this.modalAberto = false;
   }
 
+  async carregarHistoricoMetas() {
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Usuário não autenticado.');
+
+      const { data: metas, error } = await supabase
+        .from('meta')
+        .select('tipo, periodo, valor_objetivo')
+        .eq('id_usuario', user.id)
+        .order('periodo', { ascending: false });
+
+      if (error) throw error;
+
+      this.historicoMetas = (metas || []).map(meta => ({
+        tipo: meta.tipo,
+        periodo: meta.periodo,
+        valorObjetivo: meta.valor_objetivo,
+        valorObtido: this.getLucro(meta.tipo, meta.periodo)
+      }));
+
+    } catch (err: any) {
+      console.error('Erro ao carregar histórico de metas:', err.message);
+    }
+  }
+
   async salvarMeta() {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-      if (userError || !user) {
-        throw new Error('Usuário não autenticado.');
-      }
+      if (userError || !user) throw new Error('Usuário não autenticado.');
 
       const periodo = this.tipoMetaModal === 'mes'
-        ? format(new Date(), 'MM/yyyy')
-        : format(new Date(), 'yyyy');
+        ? this.mesSelecionado
+        : this.anoSelecionado;
 
       const tipo = this.tipoMetaModal;
 
-      // Verificar se já existe meta
       const { data: metaExistente, error: fetchError } = await supabase
         .from('meta')
         .select('*')
@@ -94,102 +134,73 @@ export class GoalsComponent {
         .eq('periodo', periodo)
         .single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
-      }
+      if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
       if (metaExistente) {
-        // Atualizar
         const { error: updateError } = await supabase
           .from('meta')
-          .update({
-            valor_objetivo: this.valorMetaEdicao
-          })
+          .update({ valor_objetivo: this.valorMetaEdicao })
           .eq('id', metaExistente.id);
 
         if (updateError) throw updateError;
       } else {
-        // Inserir
         const { error: insertError } = await supabase
           .from('meta')
           .insert({
             id_usuario: user.id,
-            tipo: tipo,
-            periodo: periodo,
+            tipo,
+            periodo,
             valor_objetivo: this.valorMetaEdicao
           });
 
         if (insertError) throw insertError;
       }
 
-      // Atualizar localmente
       if (tipo === 'mes') {
         this.metaMesAtual.valorObjetivo = this.valorMetaEdicao;
       } else {
         this.metaAnoAtual.valorObjetivo = this.valorMetaEdicao;
       }
 
-      this.atualizarProgresso();
+      await this.atualizarProgresso();
+      this.carregarHistoricoMetas();
       this.fecharModal();
 
     } catch (err: any) {
       console.error('Erro ao salvar meta:', err.message);
-      // Se quiser, exiba um toast ou alerta aqui
     }
   }
 
   async atualizarProgresso() {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error('Usuário não autenticado.');
 
-      if (userError || !user) {
-        throw new Error('Usuário não autenticado.');
-      }
-
-      const hoje = new Date();
-      const periodoMes = format(hoje, 'MM/yyyy');
-      const periodoAno = format(hoje, 'yyyy');
-
-      // Buscar meta do mês
-      const { data: metaMes, error: mesError } = await supabase
+      // Buscar metas
+      const { data: metaMes } = await supabase
         .from('meta')
-        .select('valor_objetivo')
+        .select('valor_objetivo, periodo')
         .eq('id_usuario', user.id)
         .eq('tipo', 'mes')
-        .eq('periodo', periodoMes)
-        .single();
+        .eq('periodo', this.mesSelecionado)
+        .maybeSingle();
 
-      // Buscar meta do ano
-      const { data: metaAno, error: anoError } = await supabase
+      const { data: metaAno } = await supabase
         .from('meta')
-        .select('valor_objetivo')
+        .select('valor_objetivo, periodo')
         .eq('id_usuario', user.id)
         .eq('tipo', 'ano')
-        .eq('periodo', periodoAno)
-        .single();
+        .eq('periodo', this.anoSelecionado)
+        .maybeSingle();
 
-      // Calcular lucro do mês
-      const vendidosMes = this.investimentos.filter(i =>
-        i.valor_vendido > 0 &&
-        i.data_vendaDate.getMonth() === hoje.getMonth() &&
-        i.data_vendaDate.getFullYear() === hoje.getFullYear()
-      );
-
-      const lucroMes = vendidosMes.reduce((total, i) => total + (i.valor_vendido * 0.9 - i.valor_compra), 0);
+      const lucroMes = this.getLucro('mes', this.mesSelecionado);
+      const lucroAno = this.getLucro('ano', this.anoSelecionado);
 
       this.metaMesAtual.valorObjetivo = metaMes ? metaMes.valor_objetivo : 0;
       this.metaMesAtual.valorObtido = lucroMes;
       this.metaMesAtual.progresso = this.metaMesAtual.valorObjetivo > 0
         ? Math.min(Math.floor((lucroMes / this.metaMesAtual.valorObjetivo) * 100), 100)
         : 0;
-
-      // Calcular lucro do ano
-      const vendidosAno = this.investimentos.filter(i =>
-        i.valor_vendido > 0 &&
-        i.data_vendaDate.getFullYear() === hoje.getFullYear()
-      );
-
-      const lucroAno = vendidosAno.reduce((total, i) => total + (i.valor_vendido * 0.9 - i.valor_compra), 0);
 
       this.metaAnoAtual.valorObjetivo = metaAno ? metaAno.valor_objetivo : 0;
       this.metaAnoAtual.valorObtido = lucroAno;
@@ -198,9 +209,44 @@ export class GoalsComponent {
         : 0;
 
     } catch (err: any) {
-      console.error('Erro ao atualizar progresso das metas:', err.message);
-      // Pode exibir um toast se quiser
+      console.error('Erro ao atualizar progresso:', err.message);
     }
+  }
+
+  getLucro(tipo: string, periodo: string): number {
+    if (periodo) {
+      const [mesStr, anoStr] = periodo.split('/');
+      const mesSelecionadoNum = parseInt(mesStr, 10) - 1;
+      const anoSelecionadoNum = parseInt(anoStr, 10);
+      if (tipo === 'mes') {
+        // Lucro Mês Selecionado
+        const vendidosMes = this.investimentos.filter(i =>
+          i.valor_vendido > 0 &&
+          i.data_vendaDate.getMonth() === mesSelecionadoNum &&
+          i.data_vendaDate.getFullYear() === anoSelecionadoNum
+        );
+
+        const lucroMes = vendidosMes.reduce((total, i) => total + (i.valor_vendido * 0.9 - i.valor_compra), 0);
+        return lucroMes
+      }
+
+      if (tipo === 'ano') {
+        // Lucro Ano Selecionado
+        const vendidosAno = this.investimentos.filter(i =>
+          i.valor_vendido > 0 &&
+          i.data_vendaDate.getFullYear() === parseInt(periodo)
+        );
+
+        const lucroAno = vendidosAno.reduce((total, i) => total + (i.valor_vendido * 0.9 - i.valor_compra), 0);
+        return lucroAno
+      }
+    }
+
+    return 0
+  }
+
+  calcularProgresso(meta: any) {
+    return Math.floor(Math.min((meta.valorObtido / meta.valorObjetivo) * 100, 100)) || 0
   }
 }
 

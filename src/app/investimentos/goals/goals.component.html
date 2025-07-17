@@ -17,7 +17,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Meta do Mês -->
             <div class="flex flex-col items-center gap-2 bg-zinc-800 p-4 rounded shadow">
-                <h3 class="text-lg font-bold text-orange-500">Meta do Mês — {{ mesAtual | titlecase }}</h3>
+                <div class="flex items-center gap-2 mb-2">
+                    <h3 class="text-lg font-bold text-orange-500">Meta do Mês —</h3>
+                    <select [(ngModel)]="mesSelecionado" (change)="atualizarProgresso()"
+                        class="bg-zinc-700 text-white rounded px-2 py-1 text-sm">
+                        <option *ngFor="let m of mesesDisponiveis" [value]="m.value">{{ m.label }}</option>
+                    </select>
+                </div>
 
                 <div class="relative w-24 h-24">
                     <svg class="w-24 h-24 -rotate-90">
@@ -50,7 +56,14 @@
 
             <!-- Meta do Ano -->
             <div class="flex flex-col items-center gap-2 bg-zinc-800 p-4 rounded shadow">
-                <h3 class="text-lg font-bold text-orange-500">Meta do Ano — {{ anoAtual }}</h3>
+                <div class="flex items-center gap-2 mb-2">
+                    <h3 class="text-lg font-bold text-orange-500">Meta do Ano —</h3>
+                    <select [(ngModel)]="anoSelecionado" (change)="atualizarProgresso()"
+                        class="bg-zinc-700 text-white rounded px-2 py-1 text-sm">
+                        <option *ngFor="let a of anosDisponiveis" [value]="a.value">{{ a.label }}</option>
+                    </select>
+
+                </div>
                 <!-- Barra circular de progresso -->
                 <div class="relative w-24 h-24">
                     <svg class="w-24 h-24 rotate-[-90deg]">
@@ -84,15 +97,48 @@
         <!-- Histórico de Metas -->
         <div>
             <h3 class="text-lg font-bold text-orange-500 mb-2">Histórico de Metas</h3>
-            <div *ngIf="historicoMetas.length > 0" class="space-y-2">
-                <div *ngFor="let meta of historicoMetas"
-                    class="flex justify-between bg-zinc-800 p-2 rounded shadow text-sm">
-                    <span>{{ meta.tipo | titlecase }} - {{ meta.periodo }}</span>
-                    <span [ngClass]="{ 'text-green-400': meta.bateu, 'text-red-400': !meta.bateu }">
-                        {{ meta.bateu ? 'Atingida' : 'Não Atingida' }}
-                    </span>
+
+            <!-- Cabeçalho -->
+            <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 px-2">
+                <span>Período</span>
+                <span class="text-center">Obtido</span>
+                <span class="text-center">Meta</span>
+                <span class="text-center">Progresso</span>
+            </div>
+
+            <!-- Lista com scroll -->
+            <div *ngIf="historicoMetas.length > 0" class="space-y-2 max-h-[16rem] overflow-y-auto pr-2">
+                <div *ngFor="let meta of historicoMetas" class="bg-zinc-800 p-2 rounded shadow text-xs">
+                    <div class="grid grid-cols-4 gap-2 items-center">
+                        <span>{{ meta.tipo | titlecase }} — {{ meta.periodo }}</span>
+
+                        <p class="inline-flex items-center justify-center">
+                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                class="w-4 h-4 mr-1" />
+                            {{ meta.valorObtido | number:'1.0-0' }}
+                        </p>
+
+                        <p class="inline-flex items-center justify-center">
+                            <img src="https://ubiservices.cdn.ubi.com/0d2ae42d-4c27-4cb7-af6c-2099062302bb/DeployerAssetsJune2023/a096d28b_005a_425c_a58c_1a5ff7b13bea.png"
+                                class="w-4 h-4 mr-1" />
+                            {{ meta.valorObjetivo | number:'1.0-0' }}
+                        </p>
+
+                        <div class="flex flex-col items-center justify-center">
+                            <span>{{ calcularProgresso(meta) }}%</span>
+                            <div class="w-full bg-gray-700 h-2 rounded mt-1">
+                                <div class="h-2 rounded transition-all duration-700" [ngClass]="{
+                                    'bg-orange-500': ((meta.valorObtido / meta.valorObjetivo) * 100) < 100,
+                                    'bg-green-500': ((meta.valorObtido / meta.valorObjetivo) * 100) >= 100 }"
+                                    [style.width.%]="calcularProgresso(meta)">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
+
             <p *ngIf="historicoMetas.length === 0" class="text-gray-400 text-center">Nenhuma meta registrada.</p>
         </div>
 
